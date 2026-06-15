@@ -1,0 +1,4 @@
+backup/
+.DS_Store
+*.tar.gz
+*.sql.gz

@@ -1,0 +1,518 @@
+.dentsoft-admin-wrap {
+    margin: 20px 20px 20px 0;
+}
+
+.dentsoft-admin-wrap .wp-heading-inline {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.dentsoft-admin-wrap .wp-heading-inline .dashicons {
+    font-size: 32px;
+    width: 32px;
+    height: 32px;
+}
+
+.dentsoft-admin-container {
+    background: #fff;
+    border: 1px solid #c3c4c7;
+    box-shadow: 0 1px 1px rgba(0, 0, 0, .04);
+    margin-top: 20px;
+}
+
+.dentsoft-filters {
+    display: flex;
+    gap: 15px;
+    padding: 20px;
+    border-bottom: 1px solid #e0e0e0;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+.dentsoft-filters .filter-group {
+    flex: 1;
+    min-width: 200px;
+}
+
+.dentsoft-search-input,
+.dentsoft-select {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid #dcdcde;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+.dentsoft-stats-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+    padding: 20px;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.dentsoft-stat-card {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 15px;
+    background: #f9f9f9;
+    border-radius: 8px;
+    border: 1px solid #e0e0e0;
+}
+
+.dentsoft-stat-card .stat-icon {
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    color: #fff;
+}
+
+.dentsoft-stat-card .stat-icon.pending {
+    background: #ffc107;
+}
+
+.dentsoft-stat-card .stat-icon.confirmed {
+    background: #28a745;
+}
+
+.dentsoft-stat-card .stat-icon.completed {
+    background: #17a2b8;
+}
+
+.dentsoft-stat-card .stat-icon.cancelled {
+    background: #dc3545;
+}
+
+.dentsoft-stat-card .stat-icon .dashicons {
+    font-size: 24px;
+    width: 24px;
+    height: 24px;
+}
+
+.dentsoft-stat-card .stat-content h3 {
+    margin: 0;
+    font-size: 28px;
+    font-weight: 700;
+    color: #2c3e50;
+}
+
+.dentsoft-stat-card .stat-content p {
+    margin: 0;
+    font-size: 13px;
+    color: #7e8299;
+}
+
+.dentsoft-table-wrapper {
+    overflow-x: auto;
+}
+
+.dentsoft-appointments-table {
+    margin: 0;
+}
+
+.dentsoft-appointments-table th {
+    background: #f9f9f9;
+    font-weight: 600;
+    padding: 12px;
+    border-bottom: 2px solid #e0e0e0;
+}
+
+.dentsoft-appointments-table td {
+    padding: 12px;
+    vertical-align: middle;
+}
+
+.dentsoft-appointments-table .column-id {
+    width: 60px;
+}
+
+.dentsoft-appointments-table .column-status {
+    width: 120px;
+}
+
+.dentsoft-appointments-table .column-actions {
+    width: 150px;
+}
+
+.dentsoft-badge {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 600;
+    text-align: center;
+    white-space: nowrap;
+}
+
+.dentsoft-badge.badge-warning {
+    background: #fff3cd;
+    color: #856404;
+}
+
+.dentsoft-badge.badge-success {
+    background: #d4edda;
+    color: #155724;
+}
+
+.dentsoft-badge.badge-danger {
+    background: #f8d7da;
+    color: #721c24;
+}
+
+.dentsoft-badge.badge-info {
+    background: #d1ecf1;
+    color: #0c5460;
+}
+
+.dentsoft-action-buttons {
+    display: flex;
+    gap: 5px;
+}
+
+.dentsoft-action-buttons .button-small {
+    padding: 4px 8px;
+    min-height: 0;
+    line-height: 1;
+}
+
+.dentsoft-pagination {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 20px;
+    border-top: 1px solid #e0e0e0;
+    background: #f9f9f9;
+}
+
+.dentsoft-pagination .pagination-controls {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.dentsoft-pagination .page-info {
+    font-size: 14px;
+    color: #646970;
+}
+
+.dentsoft-loading {
+    padding: 40px;
+    text-align: center;
+}
+
+.dentsoft-loading p {
+    margin-top: 15px;
+    color: #646970;
+}
+
+.dentsoft-settings-wrap {
+    margin: 20px 20px 20px 0;
+}
+
+.dentsoft-settings-wrap .wp-heading-inline {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.dentsoft-settings-wrap .wp-heading-inline .dashicons {
+    font-size: 32px;
+    width: 32px;
+    height: 32px;
+}
+
+.dentsoft-settings-container {
+    background: #fff;
+    border: 1px solid #c3c4c7;
+    box-shadow: 0 1px 1px rgba(0, 0, 0, .04);
+    margin-top: 20px;
+}
+
+.dentsoft-settings-form {
+    padding: 30px;
+}
+
+.dentsoft-settings-section {
+    margin-bottom: 30px;
+    padding-bottom: 30px;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.dentsoft-settings-section:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+    padding-bottom: 0;
+}
+
+.dentsoft-settings-section .section-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.dentsoft-settings-section .section-header .dashicons {
+    font-size: 24px;
+    width: 24px;
+    height: 24px;
+    color: #2271b1;
+}
+
+.dentsoft-settings-section .section-header h2 {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 600;
+    color: #1d2327;
+}
+
+.dentsoft-field-group {
+    margin-bottom: 20px;
+}
+
+.dentsoft-field-group:last-child {
+    margin-bottom: 0;
+}
+
+.dentsoft-label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: #1d2327;
+    font-size: 14px;
+}
+
+.dentsoft-label .required {
+    color: #dc3545;
+}
+
+.dentsoft-input {
+    width: 100%;
+    max-width: 500px;
+    padding: 8px 12px;
+    border: 1px solid #dcdcde;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+.dentsoft-input:focus {
+    border-color: #2271b1;
+    outline: none;
+    box-shadow: 0 0 0 1px #2271b1;
+}
+
+.dentsoft-input[readonly] {
+    background-color: #f5f5f5;
+    color: #666;
+    cursor: not-allowed;
+    opacity: 0.7;
+}
+
+.dentsoft-input[readonly]:focus {
+    border-color: #dcdcde;
+    box-shadow: none;
+}
+
+.dentsoft-help-text {
+    margin-top: 8px;
+    color: #646970;
+    font-size: 13px;
+    display: flex;
+    align-items: flex-start;
+    gap: 5px;
+}
+
+.dentsoft-help-text .dashicons {
+    font-size: 16px;
+    width: 16px;
+    height: 16px;
+    flex-shrink: 0;
+    margin-top: 2px;
+}
+
+.dentsoft-toggle-label {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    cursor: pointer;
+    position: relative;
+}
+
+.dentsoft-toggle {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.dentsoft-toggle-slider {
+    width: 44px;
+    height: 24px;
+    background: #dcdcde;
+    border-radius: 24px;
+    position: relative;
+    transition: background 0.3s;
+}
+
+.dentsoft-toggle-slider::before {
+    content: '';
+    position: absolute;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: #fff;
+    top: 3px;
+    left: 3px;
+    transition: transform 0.3s;
+}
+
+.dentsoft-toggle:checked+.dentsoft-toggle-slider {
+    background: #2271b1;
+}
+
+.dentsoft-toggle:checked+.dentsoft-toggle-slider::before {
+    transform: translateX(20px);
+}
+
+.dentsoft-toggle-text {
+    font-weight: 500;
+    color: #1d2327;
+}
+
+.dentsoft-color-picker {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.dentsoft-color-input {
+    width: 60px;
+    height: 40px;
+    border: 1px solid #dcdcde;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.dentsoft-color-text {
+    width: 120px;
+    padding: 8px 12px;
+    border: 1px solid #dcdcde;
+    border-radius: 4px;
+    font-family: monospace;
+    font-size: 14px;
+    background: #f9f9f9;
+}
+
+.dentsoft-shortcode-box {
+    background: #f9f9f9;
+    border: 1px solid #e0e0e0;
+    border-radius: 6px;
+    padding: 20px;
+}
+
+.dentsoft-shortcode-box h3 {
+    margin: 0 0 15px 0;
+    font-size: 16px;
+    color: #1d2327;
+}
+
+.dentsoft-shortcode-display {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: #fff;
+    padding: 15px;
+    border: 1px solid #dcdcde;
+    border-radius: 4px;
+    margin-bottom: 10px;
+}
+
+.dentsoft-shortcode-display code {
+    flex: 1;
+    font-family: 'Courier New', monospace;
+    font-size: 14px;
+    color: #2271b1;
+    background: transparent;
+    padding: 0;
+}
+
+.dentsoft-copy-btn {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    padding: 6px 12px;
+    background: #2271b1;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 13px;
+    transition: background 0.3s;
+}
+
+.dentsoft-copy-btn:hover {
+    background: #135e96;
+}
+
+.dentsoft-copy-btn.copied {
+    background: #28a745;
+}
+
+.dentsoft-copy-btn .dashicons {
+    font-size: 16px;
+    width: 16px;
+    height: 16px;
+}
+
+.dentsoft-settings-footer {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding-top: 20px;
+    border-top: 1px solid #e0e0e0;
+    margin-top: 30px;
+}
+
+.dentsoft-reset-btn {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+@media screen and (max-width: 782px) {
+    .dentsoft-filters {
+        flex-direction: column;
+    }
+
+    .dentsoft-filters .filter-group {
+        width: 100%;
+    }
+
+    .dentsoft-stats-row {
+        grid-template-columns: 1fr;
+    }
+
+    .dentsoft-pagination {
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .dentsoft-action-buttons {
+        flex-wrap: wrap;
+    }
+
+    .dentsoft-settings-footer {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .dentsoft-settings-footer .button {
+        width: 100%;
+        text-align: center;
+    }
+}

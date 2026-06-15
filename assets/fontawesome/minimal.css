@@ -1,0 +1,103 @@
+@font-face {
+    font-family: 'Font Awesome 6 Pro';
+    font-style: normal;
+    font-weight: 900;
+    font-display: block;
+    src: url("fa-solid-900.woff2") format("woff2");
+}
+
+.fa,
+.fas,
+.fa-solid,
+.fa-regular,
+.far {
+    -moz-osx-font-smoothing: grayscale;
+    -webkit-font-smoothing: antialiased;
+    display: inline-block;
+    font-style: normal;
+    font-variant: normal;
+    text-rendering: auto;
+    line-height: 1;
+    font-family: 'Font Awesome 6 Pro';
+    font-weight: 900;
+}
+
+[class^="fa-"]:before,
+[class*=" fa-"]:before {
+    display: inline-block;
+    font-style: normal;
+    font-variant: normal;
+    text-rendering: auto;
+    -webkit-font-smoothing: antialiased;
+    font-family: 'Font Awesome 6 Pro';
+    font-weight: 900;
+}
+
+.fa-calendar:before {
+    content: "\f133";
+}
+
+.fa-clock:before {
+    content: "\f017";
+}
+
+.fa-user:before {
+    content: "\f007";
+}
+
+.fa-phone:before {
+    content: "\f095";
+}
+
+.fa-envelope:before {
+    content: "\f0e0";
+}
+
+.fa-house-chimney-medical:before {
+    content: "\e3b2";
+}
+
+.fa-user-md:before {
+    content: "\f0f0";
+}
+
+.fa-id-card:before {
+    content: "\f2c2";
+}
+
+.fa-check:before {
+    content: "\f00c";
+}
+
+.fa-arrow-left:before {
+    content: "\f060";
+}
+
+.fa-arrow-right:before {
+    content: "\f061";
+}
+
+.fa-arrow-right-long:before {
+    content: "\f178";
+}
+
+.fa-beat-fade {
+    animation: fa-beat-fade 2s infinite;
+}
+
+@keyframes fa-beat-fade {
+    0% {
+        opacity: 1;
+        transform: scale(1);
+    }
+
+    50% {
+        opacity: 0.6;
+        transform: scale(1.075);
+    }
+
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
