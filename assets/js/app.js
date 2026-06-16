@@ -103,10 +103,14 @@
         renderClinics(clinics) {
             const $select = $('#dentsoft-clinic-select');
 
+            // Klinik adimi gizli; Select2 KULLANILMIYOR (eski select2 v3.4.1
+            // gizli select'te 'query function not defined' hatasi verip
+            // DentSoftApp'i cokertiyordu). Sade <select> + change olayi.
             if ($select.data('select2')) {
-                $select.select2('destroy');
+                try { $select.select2('destroy'); } catch (e) {}
             }
 
+            $select.off('change.dentsoft');
             $select.empty().append('<option value="">Klinik Seçiniz...</option>');
 
             if (clinics && clinics.length > 0) {
@@ -118,16 +122,12 @@
                     $select.append($option);
                 });
 
-                $select.select2({
-                    placeholder: 'Klinik Seçiniz...',
-                    minimumResultsForSearch: -1,
-                    escapeMarkup: function (m) { return m; }
-                }).on('change', (e) => {
+                $select.on('change.dentsoft', () => {
                     this.onClinicChange();
                 });
 
                 if (clinics.length === 1) {
-                    $select.val(clinics[0].ID).trigger('change');
+                    $select.val(clinics[0].ID).trigger('change.dentsoft');
                 }
             }
         },
