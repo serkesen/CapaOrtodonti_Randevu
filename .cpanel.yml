@@ -1,13 +1,8 @@
 ---
 deployment:
   tasks:
-    - export DEPLOYPATH=/home/d34fcetzlilchq/public_html/wp-content/plugins/DentSoftOnlineRandevu/
-    - /bin/mkdir -p "$DEPLOYPATH"
-    - >
-      /usr/bin/rsync -a --delete
-      --exclude='.git/'
-      --exclude='.gitignore'
-      --exclude='.cpanel.yml'
-      --exclude='README.md'
-      --exclude='backup/'
-      /home/d34fcetzlilchq/git-deploy/CapaOrtodonti_Randevu/ "$DEPLOYPATH"
+    - export PLUGINDIR=/home/d34fcetzlilchq/public_html/wp-content/plugins/DentSoftOnlineRandevu
+    - export CLONEDIR=/home/d34fcetzlilchq/git-deploy/CapaOrtodonti_Randevu
+    - /usr/bin/rsync -a "$CLONEDIR/public/form-template.php" "$PLUGINDIR/public/form-template.php"
+    - /usr/bin/rsync -a "$CLONEDIR/assets/css/main-styles.css" "$PLUGINDIR/assets/css/main-styles.css"
+    - /usr/bin/rsync -a "$CLONEDIR/assets/js/app.js" "$PLUGINDIR/assets/js/app.js"
