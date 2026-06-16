@@ -60,14 +60,8 @@
         },
 
         initializePlugins() {
-            if (typeof $.fn.select2 !== 'undefined') {
-                $('.dentsoft-select2').select2({
-                    width: '100%',
-                    placeholder: 'Seçiniz...',
-                    allowClear: false,
-                    minimumResultsForSearch: -1
-                });
-            }
+            // Select2 init'i renderDoctors icinde (v4, avatar template'li) yapilir.
+            // Klinik select duz birakildi; global .dentsoft-select2 init'i kaldirildi.
         },
 
         loadClinics() {
@@ -211,10 +205,10 @@
 
                 $select.select2({
                     placeholder: 'Hekim Seçiniz...',
-                    minimumResultsForSearch: -1,
+                    minimumResultsForSearch: Infinity,
                     dropdownCssClass: 'dentsoft-doctor-dropdown',
-                    formatResult: this.formatDoctorOption.bind(this),
-                    formatSelection: this.formatDoctorSelection.bind(this),
+                    templateResult: this.formatDoctorOption.bind(this),
+                    templateSelection: this.formatDoctorSelection.bind(this),
                     escapeMarkup: function (m) { return m; }
                 }).on('change', (e) => {
                     this.onDoctorChange();
