@@ -935,34 +935,14 @@
         showKVKK(e) {
             e.preventDefault();
             $('#dentsoft-kvkk-modal').fadeIn();
-            $('#dentsoft-kvkk-content').html('<div class="dentsoft-loading"><div class="dentsoft-spinner"></div><p>Yükleniyor...</p></div>');
-
-            const ajaxSettings = {
-                url: `${this.config.apiUrl}/ApprovalDataShare`,
-                method: 'POST',
-                data: {
-                    ClinicID: this.selectedData.clinic?.ID || '',
-                    ContactRegion: '90',
-                    ContactMobile: '5555555555',
-                    Type: 'Send'
-                },
-                success: (response) => {
-                    if (response.Response && response.Response.Html) {
-                        $('#dentsoft-kvkk-content').html(response.Response.Html);
-                    }
-                },
-                error: () => {
-                    $('#dentsoft-kvkk-content').html('<p>KVKK metni yüklenemedi.</p>');
-                }
-            };
-
-            if (this.config.bearerToken && this.config.bearerToken.trim() !== '') {
-                ajaxSettings.headers = {
-                    'Authorization': `Bearer ${this.config.bearerToken}`
-                };
-            }
-
-            $.ajax(ajaxSettings);
+            const kvkkUrl = 'https://capaortodonti.com/kvkk/';
+            $('#dentsoft-kvkk-content').html(
+                '<div class="dentsoft-loading"><div class="dentsoft-spinner"></div><p>Y\u00fckleniyor...</p></div>' +
+                '<iframe src="' + kvkkUrl + '" ' +
+                'style="width:100%;height:60vh;border:0;display:block;" ' +
+                'onload="this.previousElementSibling && this.previousElementSibling.remove();" ' +
+                'title="KVKK Ayd\u0131nlatma Metni"></iframe>'
+            );
         },
 
         closeModal() {
