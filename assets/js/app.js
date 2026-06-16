@@ -146,6 +146,8 @@
                     $('.dentsoft-btn-next[data-step="1"]').prop('disabled', false);
                     this.updateSelectionSummary();
                     this.loadDoctors(clinicData.ID);
+                    // Tek klinik: klinik adimi atlanir, dogrudan hekim adimina gec
+                    if (this.currentStep === 1) { this.goToStep(2); }
                 }
             } else {
                 this.selectedData.clinic = null;
@@ -716,7 +718,7 @@
         },
 
         prevStep() {
-            if (this.currentStep > 1) {
+            if (this.currentStep > 2) {
                 this.goToStep(this.currentStep - 1);
             }
         },
