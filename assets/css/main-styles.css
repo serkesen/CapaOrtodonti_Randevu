@@ -1152,3 +1152,6 @@
 
 /* SELECT2 CUSTOM STYLES */
 /* deploy-test: guvenli yorum, gorunumu etkilemez */
+
+/* Tek klinik: adim gostergesinde Klinik adimini gizle */
+.dentsoft-progress-bar .dentsoft-step[data-step="1"] { display: none !important; }
