@@ -451,15 +451,10 @@
         },
 
         submitAppointment() {
-            if (!this.validateForm()) {
-                return;
-            }
-
-            const clinicId = this.selectedData.clinic.ID;
-            const contactRegion = '90';
-            const contactMobile = $('#dentsoft-patient-phone').val().replace(/\D/g, '');
-
-            this.sendApprovalCode(clinicId, contactRegion, contactMobile);
+            if (!this.validateForm()) return;
+            // KVKK onayi checkbox ile alindi (validateForm kontrol etti).
+            // SMS onay kodu akisi kaldirildi; dogrudan randevu olusturuluyor.
+            this.createAppointment();
         },
 
         sendApprovalCode(clinicId, contactRegion, contactMobile) {
