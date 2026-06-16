@@ -878,255 +878,143 @@
     flex-wrap: wrap;
 }
 
-/* SELECT2 CUSTOM STYLES */
 
-.select2-container {
-    width: 100% !important;
-}
+/* ===== SELECT2 v4 STYLES (v4.0.13) — mobile-first, --dentsoft-* tokenleri ===== */
 
-.select2-container>a,
-.select2-container .select2-choice {
-    /* width: 100% !important; */
+/* Kapali kutu (tek secim) */
+.select2-container--default .select2-selection--single {
     height: auto !important;
     display: flex !important;
     align-items: center !important;
     padding: 12px 45px 12px 15px !important;
     font-size: 16px !important;
-    font-weight: 400 !important;
     line-height: 1.5 !important;
     color: var(--dentsoft-dark) !important;
     background-color: var(--dentsoft-white) !important;
-    background-image: none !important;
     border: 2px solid var(--dentsoft-border) !important;
     border-radius: var(--dentsoft-radius-sm) !important;
     transition: all 0.3s ease !important;
     box-shadow: none !important;
 }
-
-.select2-container>a:hover,
-.select2-container .select2-choice:hover,
-.select2-container-active .select2-choice,
-.select2-container-active .select2-choices,
-.select2-dropdown-open .select2-choice {
+.select2-container--default .select2-selection--single:hover,
+.select2-container--default.select2-container--focus .select2-selection--single,
+.select2-container--default.select2-container--open .select2-selection--single {
     border-color: var(--dentsoft-primary) !important;
 }
-
-.select2-container.select2-container-active.select2-dropdown-open>a,
-.select2-container.select2-container-active.select2-dropdown-open .select2-choice {
-    border-color: var(--dentsoft-primary) !important;
+.select2-container--default.select2-container--open .select2-selection--single {
     border-radius: var(--dentsoft-radius-sm) var(--dentsoft-radius-sm) 0 0 !important;
     box-shadow: var(--dentsoft-shadow) !important;
 }
-
-.select2-container .select2-choice .select2-chosen {
-    margin-right: 30px !important;
+.select2-container--default .select2-selection--single .select2-selection__rendered {
+    padding: 0 !important;
+    color: var(--dentsoft-dark) !important;
+    line-height: 1.5 !important;
+}
+.select2-container--default .select2-selection--single .select2-selection__placeholder {
+    color: var(--dentsoft-secondary) !important;
 }
 
-.select2-container>a>span.select2-arrow,
-.select2-container .select2-choice .select2-arrow {
-    position: absolute !important;
+/* Ok */
+.select2-container--default .select2-selection--single .select2-selection__arrow {
+    height: 100% !important;
     right: 12px !important;
-    top: 50% !important;
-    transform: translateY(-50%) !important;
     width: 20px !important;
-    height: 20px !important;
     background: none !important;
-    border: none !important;
-    border-radius: 0 !important;
 }
-
-.select2-container .select2-choice .select2-arrow b {
-    position: relative !important;
-    display: block !important;
-    width: 0 !important;
-    height: 0 !important;
-    background: none !important;
-    border-left: 5px solid transparent !important;
-    border-right: 5px solid transparent !important;
-    border-top: 6px solid var(--dentsoft-secondary) !important;
+.select2-container--default .select2-selection--single .select2-selection__arrow b {
+    border-color: var(--dentsoft-secondary) transparent transparent transparent !important;
+    border-width: 6px 5px 0 5px !important;
+    margin-left: -5px !important;
     transition: transform 0.3s ease !important;
 }
-
-.select2-container.select2-dropdown-open .select2-choice .select2-arrow b {
-    transform: rotate(180deg) !important;
+.select2-container--default.select2-container--open .select2-selection--single .select2-selection__arrow b {
+    border-color: transparent transparent var(--dentsoft-secondary) transparent !important;
+    border-width: 0 5px 6px 5px !important;
 }
 
-.select2-drop {
+/* Acilir kutu (dropdown) */
+.select2-container--default .select2-dropdown {
     border: 2px solid var(--dentsoft-primary) !important;
     border-top: none !important;
     border-radius: 0 0 var(--dentsoft-radius-sm) var(--dentsoft-radius-sm) !important;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
-    margin-top: -2px !important;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15) !important;
     background: var(--dentsoft-white) !important;
 }
-
-.select2-drop.select2-drop-active,
-.select2-drop-active {
-    border-color: var(--dentsoft-primary) !important;
-    border: 2px solid var(--dentsoft-primary) !important;
-}
-
-.select2-drop.select2-drop-above.select2-drop-active {
+.select2-container--default .select2-dropdown--above {
     border-top: 2px solid var(--dentsoft-primary) !important;
+    border-bottom: none !important;
+    border-radius: var(--dentsoft-radius-sm) var(--dentsoft-radius-sm) 0 0 !important;
 }
-
-.select2-search {
+.select2-container--default .select2-search--dropdown {
     padding: 12px !important;
     background: var(--dentsoft-light) !important;
 }
-
-.select2-search input {
+.select2-container--default .select2-search--dropdown .select2-search__field {
     padding: 8px 12px !important;
     border: 2px solid var(--dentsoft-border) !important;
     border-radius: var(--dentsoft-radius-sm) !important;
     font-size: 14px !important;
     background: var(--dentsoft-white) !important;
     color: var(--dentsoft-dark) !important;
-}
-
-.select2-search input:focus,
-.select2-focused {
-    border-color: var(--dentsoft-primary) !important;
     outline: none !important;
     box-shadow: none !important;
 }
-
-.select2-results {
+.select2-container--default .select2-results__options {
     max-height: 350px !important;
     padding: 8px !important;
-    margin: 0 !important;
 }
-
-.select2-results ul.select2-result-sub {
-    padding: 0 !important;
-    margin: 0 !important;
-}
-
-.select2-results li {
-    padding: 0 !important;
-    margin: 0 0 6px 0 !important;
-    list-style: none !important;
-}
-
-.select2-results .select2-result-label {
+.select2-container--default .select2-results__option {
     padding: 10px 12px !important;
+    margin: 0 0 6px 0 !important;
     border-radius: var(--dentsoft-radius-sm) !important;
-    cursor: pointer !important;
-    transition: all 0.2s ease !important;
     font-size: 15px !important;
     color: var(--dentsoft-dark) !important;
+    transition: all 0.2s ease !important;
 }
-
-.select2-results .select2-highlighted,
-.select2-highlighted {
+.select2-container--default .select2-results__option--highlighted[aria-selected] {
     background: var(--dentsoft-primary-light) !important;
     color: var(--dentsoft-primary) !important;
 }
-
-.select2-results .select2-highlighted .select2-result-label {
-    background: transparent !important;
-}
-
-.select2-results .select2-highlighted em {
-    background: transparent !important;
-}
-
-.select2-results .select2-highlighted ul {
-    background: var(--dentsoft-white) !important;
-    color: var(--dentsoft-dark) !important;
-}
-
-.select2-results .select2-selected {
+.select2-container--default .select2-results__option[aria-selected=true] {
     background: var(--dentsoft-light) !important;
     color: var(--dentsoft-secondary) !important;
 }
-
-.select2-no-results {
+.select2-container--default .select2-results__message {
     padding: 15px !important;
     text-align: center !important;
     color: var(--dentsoft-secondary) !important;
     font-size: 14px !important;
 }
 
-.dentsoft-doctor-dropdown.select2-drop {
+/* Hekim dropdown ozel gorunumu (avatar + isim + en erken tarih) */
+.dentsoft-doctor-dropdown.select2-dropdown {
     min-width: 400px !important;
 }
-
-.dentsoft-doctor-dropdown .select2-results {
+.dentsoft-doctor-dropdown .select2-results__options {
     max-height: 450px !important;
     padding: 12px !important;
 }
-
-.dentsoft-doctor-dropdown .select2-results li {
+.dentsoft-doctor-dropdown .select2-results__option {
+    padding: 0 !important;
     margin-bottom: 8px !important;
 }
-
-.dentsoft-doctor-dropdown .select2-result-label {
-    padding: 0 !important;
-}
-
-.dentsoft-doctor-dropdown .select2-highlighted .dentsoft-doctor-item {
+.dentsoft-doctor-dropdown .select2-results__option--highlighted[aria-selected] .dentsoft-doctor-item {
     background-color: var(--dentsoft-primary-light) !important;
     border-radius: var(--dentsoft-radius-sm) !important;
 }
 
-.select2-container-multi .select2-choices {
-    border: 2px solid var(--dentsoft-border) !important;
-    border-radius: var(--dentsoft-radius-sm) !important;
-    padding: 6px 8px !important;
-    background: var(--dentsoft-white) !important;
-    min-height: 48px !important;
-}
-
-.select2-container-multi .select2-choices:hover {
-    border-color: var(--dentsoft-primary) !important;
-}
-
-.select2-container-multi .select2-choices li.select2-search-choice {
-    background: var(--dentsoft-primary-light) !important;
-    border: 1px solid var(--dentsoft-primary) !important;
-    border-radius: var(--dentsoft-radius-sm) !important;
-    padding: 4px 24px 4px 10px !important;
-    margin: 4px 0 4px 6px !important;
-    color: var(--dentsoft-primary) !important;
-    font-size: 14px !important;
-}
-
-.select2-container-multi .select2-search-choice-close {
-    top: 6px !important;
-    right: 6px !important;
-    width: 14px !important;
-    height: 14px !important;
-    background: none !important;
-    font-size: 16px !important;
-    color: var(--dentsoft-primary) !important;
-}
-
-.select2-container-multi .select2-search-choice-close:hover {
-    color: var(--dentsoft-danger) !important;
-}
-
-.select2-drop-mask {
-    background: rgba(0, 0, 0, 0.2) !important;
-    z-index: 9998 !important;
-}
-
+/* Mobil (<=768px): genel + Grup A doctor kurallari (v3'ten birebir korundu) */
 @media (max-width: 768px) {
-
-    .select2-container>a,
-    .select2-container .select2-choice {
+    .select2-container--default .select2-selection--single {
         font-size: 14px !important;
         padding: 10px 40px 10px 12px !important;
     }
-
-    .dentsoft-doctor-dropdown.select2-drop {
+    .dentsoft-doctor-dropdown.select2-dropdown {
         min-width: 100% !important;
     }
-
-    .dentsoft-doctor-dropdown .select2-results {
+    .dentsoft-doctor-dropdown .select2-results__options {
         padding: 8px !important;
     }
-
     .dentsoft-doctor-item {
         padding: 10px 6px !important;
     }
@@ -1149,9 +1037,6 @@
         font-size: 11px !important;
     }
 }
-
-/* SELECT2 CUSTOM STYLES */
-/* deploy-test: guvenli yorum, gorunumu etkilemez */
 
 /* Tek klinik: adim gostergesinde Klinik adimini gizle */
 .dentsoft-progress-bar .dentsoft-step[data-step="1"] { display: none !important; }
