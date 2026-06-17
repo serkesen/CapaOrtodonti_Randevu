@@ -238,7 +238,7 @@ final class DentSoft_Plugin {
         
         wp_enqueue_script('jquery');
         wp_enqueue_script('dentsoft-blockui', DENTSOFT_PLUGIN_URL . 'assets/plugins/jquery.blockUI.js', array('jquery'), DENTSOFT_VERSION, true);
-        wp_enqueue_script('dentsoft-select2', DENTSOFT_PLUGIN_URL . 'assets/vendor/select2/select2.min.js', array('jquery'), DENTSOFT_VERSION, true);
+        wp_enqueue_script('dentsoft-select2', DENTSOFT_PLUGIN_URL . 'assets/vendor/select2/select2.full.min.js', array('jquery'), DENTSOFT_VERSION, true);
         wp_enqueue_script('dentsoft-select2-tr', DENTSOFT_PLUGIN_URL . 'assets/vendor/select2/i18n/tr.js', array('dentsoft-select2'), DENTSOFT_VERSION, true);
         wp_enqueue_script('dentsoft-sweetalert2', DENTSOFT_PLUGIN_URL . 'assets/plugins/sweet-alert2/sweetalert2.min.js', array(), DENTSOFT_VERSION, true);
         wp_enqueue_script('dentsoft-app', DENTSOFT_PLUGIN_URL . 'assets/js/app.js', array('jquery', 'dentsoft-blockui', 'dentsoft-select2', 'dentsoft-select2-tr', 'dentsoft-sweetalert2'), DENTSOFT_VERSION, true);
