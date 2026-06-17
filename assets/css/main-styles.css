@@ -1036,3 +1036,11 @@
 
 /* Tek klinik: adim gostergesinde Klinik adimini gizle */
 .dentsoft-progress-bar .dentsoft-step[data-step="1"] { display: none !important; }
+
+
+/* Tek klinik ozet karti: buyuk tik dairesini gizle + dikey padding kisalt */
+.dentsoft-summary-card .summary-icon { display: none !important; }
+.dentsoft-summary-card { padding: 12px 20px !important; }
+@media (max-width: 768px) {
+    .dentsoft-summary-card { padding: 10px 15px !important; }
+}
