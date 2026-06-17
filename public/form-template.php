@@ -77,7 +77,7 @@ $primary_light = hexToRgba($primary_color, 0.1);
                     <div class="step-icon">
                         <i class="fa fa-check"></i>
                     </div>
-                    <div class="step-label">Tamamlandı</div>
+                    <div class="step-label">Onay</div>
                 </div>
             </div>
             

@@ -1044,3 +1044,74 @@
 @media (max-width: 768px) {
     .dentsoft-summary-card { padding: 10px 15px !important; }
 }
+
+
+/* ===== Progress bar: yatay pill tasarimi (mobile-first tek satir) ===== */
+.dentsoft-progress-bar {
+    display: flex !important;
+    flex-wrap: nowrap !important;
+    justify-content: center !important;
+    align-items: stretch !important;
+    gap: 6px !important;
+    padding: 0 !important;
+    max-width: 100% !important;
+}
+.dentsoft-progress-bar::before { display: none !important; }
+
+.dentsoft-step {
+    flex: 1 1 0 !important;
+    min-width: 0 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 6px !important;
+    padding: 8px 6px !important;
+    border: 2px solid var(--dentsoft-border) !important;
+    border-radius: 999px !important;
+    background: var(--dentsoft-white) !important;
+    transition: all 0.3s ease !important;
+}
+.dentsoft-step .step-icon {
+    width: auto !important;
+    height: auto !important;
+    background: transparent !important;
+    border: none !important;
+    margin: 0 !important;
+    flex-shrink: 0 !important;
+    transform: none !important;
+}
+.dentsoft-step .step-icon i {
+    font-size: 15px !important;
+    color: var(--dentsoft-secondary) !important;
+}
+.dentsoft-step .step-label {
+    font-size: 12px !important;
+    font-weight: 500 !important;
+    color: var(--dentsoft-secondary) !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+}
+.dentsoft-step.active {
+    background: var(--dentsoft-primary) !important;
+    border-color: var(--dentsoft-primary) !important;
+}
+.dentsoft-step.active .step-icon { transform: none !important; }
+.dentsoft-step.active .step-icon i,
+.dentsoft-step.active .step-label { color: var(--dentsoft-white) !important; }
+.dentsoft-step.completed {
+    background: var(--dentsoft-primary-light) !important;
+    border-color: var(--dentsoft-primary) !important;
+}
+.dentsoft-step.completed .step-icon i,
+.dentsoft-step.completed .step-label { color: var(--dentsoft-primary) !important; }
+
+@media (max-width: 768px) {
+    .dentsoft-progress-bar { gap: 4px !important; }
+    .dentsoft-step { padding: 7px 4px !important; gap: 4px !important; }
+    .dentsoft-step .step-icon i { font-size: 13px !important; }
+    .dentsoft-step .step-label { font-size: 11px !important; }
+}
+@media (max-width: 360px) {
+    .dentsoft-step .step-label { font-size: 10px !important; }
+}
