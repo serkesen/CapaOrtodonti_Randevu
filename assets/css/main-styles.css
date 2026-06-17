@@ -716,10 +716,6 @@
     }
 }
 
-.dentsoft-doctor-dropdown .select2-results {
-    max-height: 400px;
-}
-
 .dentsoft-doctor-item {
     display: flex;
     align-items: center;
@@ -991,7 +987,7 @@
     min-width: 400px !important;
 }
 .dentsoft-doctor-dropdown .select2-results__options {
-    max-height: 450px !important;
+    max-height: min(320px, 45vh) !important;
     padding: 12px !important;
 }
 .dentsoft-doctor-dropdown .select2-results__option {
