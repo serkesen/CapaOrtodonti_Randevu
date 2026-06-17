@@ -1152,3 +1152,7 @@
         margin-bottom: 0 !important;
     }
 }
+
+
+/* Randevu sayfasi: tema sayfa basligini (entry-title) gizle - SADECE bu sayfa (page-id-8830) */
+body.page-id-8830 .page-header { display: none !important; }
