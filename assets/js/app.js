@@ -222,16 +222,13 @@
             if (!item.id) return item.text;
 
             const $option = $(item.element);
-            const avatar = $option.data('avatar');
             const role = $option.data('role');
             const nearest = $option.data('nearest');
 
             return `
                 <div class="dentsoft-doctor-item">
-                    <img src="${avatar}" class="dentsoft-doctor-avatar" onerror="this.src='${this.config.pluginUrl}assets/img/default-avatar.png'" />
                     <div class="dentsoft-doctor-info">
-                        <div class="dentsoft-doctor-name">${item.text}</div>
-                        <div class="dentsoft-doctor-role">${role}</div>
+                        <div class="dentsoft-doctor-name">${item.text}${role ? ' - ' + role : ''}</div>
                         <div class="dentsoft-doctor-nearest">${nearest}</div>
                     </div>
                 </div>
@@ -245,11 +242,12 @@
 
         formatNearestDay(date, time) {
             const dateObj = new Date(date);
-            const dayName = dateObj.toLocaleDateString('tr-TR', { weekday: 'long' });
-            const dayNum = dateObj.getDate();
-            const monthName = dateObj.toLocaleDateString('tr-TR', { month: 'long' });
+            const gunler = ['Paz', 'Pzt', 'Sal', 'Çar', 'Per', 'Cum', 'Cmt'];
+            const dayShort = gunler[dateObj.getDay()];
+            const dd = String(dateObj.getDate()).padStart(2, '0');
+            const mm = String(dateObj.getMonth() + 1).padStart(2, '0');
             const timeStr = time ? ` - ${time}` : '';
-            return `En erken: ${dayNum} ${monthName} ${dayName}${timeStr}`;
+            return `En erken: ${dd}.${mm} ${dayShort}${timeStr}`;
         },
 
         onDoctorChange() {
