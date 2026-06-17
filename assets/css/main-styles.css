@@ -1137,3 +1137,18 @@
     .dentsoft-card-body { padding: 16px !important; }
     .dentsoft-appointment-wrapper { padding: 10px 0 !important; }
 }
+
+
+/* ===== Sorgula butonu kucult + header alt bosluk kisalt (mobile-first) ===== */
+@media (max-width: 768px) {
+    /* Ust Sorgula butonu: pill yuksekligine yakin, kompakt */
+    #dentsoft-header-query-btn.dentsoft-btn {
+        padding: 8px 14px !important;
+        font-size: 13px !important;
+    }
+    /* Header blogu alt boslugu + buton sarmalinin alt boslugu kisalt */
+    .dentsoft-appointment-header { margin-bottom: 14px !important; }
+    #dentsoft-header-query-btn {
+        margin-bottom: 0 !important;
+    }
+}
