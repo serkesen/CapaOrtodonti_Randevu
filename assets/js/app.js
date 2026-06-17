@@ -577,7 +577,7 @@
                     if (response.Status && response.Status.Code === 100) {
                         this.saveToDatabase(response.Response);
                     } else {
-                        // API'nin gercek hata mesajini goster (Status.Message + Error icindeki en derin metin)
+                        // Once API yanitindan ham bilgileri topla
                         const deepMsg = (obj) => {
                             if (obj == null) return '';
                             if (typeof obj === 'string') return obj;
@@ -589,10 +589,27 @@
                             }
                             return '';
                         };
-                        const statusMsg = (response.Status && response.Status.Message) ? response.Status.Message : '';
+                        const code = (response.Status && response.Status.Code) ? response.Status.Code : null;
+                        const apiMsg = (response.Status && response.Status.Message) ? response.Status.Message : '';
                         const errMsg = deepMsg(response.Error);
-                        let msg = [statusMsg, errMsg].filter(Boolean).join(': ');
-                        if (!msg) msg = 'Randevu oluşturulurken hata oluştu.';
+                        const raw = [apiMsg, errMsg].filter(Boolean).join(': ');
+
+                        // Bilinen Dentsoft hatalari icin Turkce karsiliklar (kod veya mesaj metnine gore)
+                        const trByCode = {
+                            106: 'Bu bilgilerle zaten bir randevunuz bulunuyor. Aynı anda birden fazla randevu oluşturulamaz.'
+                        };
+                        const trByText = [
+                            { match: /multiple appointment|more than one appointment/i, tr: 'Bu bilgilerle zaten bir randevunuz bulunuyor. Aynı anda birden fazla randevu oluşturulamaz.' },
+                            { match: /not available|already booked|slot/i, tr: 'Seçtiğiniz saat artık uygun değil. Lütfen başka bir saat seçin.' },
+                            { match: /invalid|required|missing|format/i, tr: 'Girdiğiniz bilgilerde bir hata var. Lütfen kontrol edip tekrar deneyin.' }
+                        ];
+
+                        let msg = trByCode[code];
+                        if (!msg) {
+                            const hit = trByText.find(r => r.match.test(raw));
+                            if (hit) msg = hit.tr;
+                        }
+                        if (!msg) msg = raw ? ('İşlem başarısız: ' + raw) : 'Randevu oluşturulurken bir hata oluştu. Lütfen tekrar deneyin.';
                         this.showError(msg);
                     }
                 },
