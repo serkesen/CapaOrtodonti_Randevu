@@ -1115,3 +1115,25 @@
 @media (max-width: 360px) {
     .dentsoft-step .step-label { font-size: 10px !important; }
 }
+
+
+/* ===== Mobil dikey tasarruf: butonlar yan yana + bosluk kisaltma ===== */
+@media (max-width: 768px) {
+    /* Footer butonlari yan yana (alt alta degil) */
+    .dentsoft-card-footer {
+        flex-direction: row !important;
+        gap: 10px !important;
+        padding: 14px 16px !important;
+    }
+    .dentsoft-card-footer .dentsoft-btn {
+        width: auto !important;
+        flex: 1 1 0 !important;
+        padding: 11px 12px !important;
+    }
+    /* Kart ust bosluklari kisalt */
+    .dentsoft-appointment-content { margin-top: 18px !important; }
+    .dentsoft-selection-summary { margin: 14px auto 0 !important; }
+    .dentsoft-card-header { padding: 16px !important; }
+    .dentsoft-card-body { padding: 16px !important; }
+    .dentsoft-appointment-wrapper { padding: 10px 0 !important; }
+}
