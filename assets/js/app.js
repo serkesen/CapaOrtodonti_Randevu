@@ -574,10 +574,26 @@
                 success: (response) => {
                     this.hideLoading();
 
-                    if (response.Response && response.Response.Appointment) {
+                    if (response.Status && response.Status.Code === 100) {
                         this.saveToDatabase(response.Response);
-                    } else if (response.Error) {
-                        this.showError('Randevu oluşturulurken hata oluştu.');
+                    } else {
+                        // API'nin gercek hata mesajini goster (Status.Message + Error icindeki en derin metin)
+                        const deepMsg = (obj) => {
+                            if (obj == null) return '';
+                            if (typeof obj === 'string') return obj;
+                            if (typeof obj === 'object') {
+                                for (const k in obj) {
+                                    const m = deepMsg(obj[k]);
+                                    if (m) return m;
+                                }
+                            }
+                            return '';
+                        };
+                        const statusMsg = (response.Status && response.Status.Message) ? response.Status.Message : '';
+                        const errMsg = deepMsg(response.Error);
+                        let msg = [statusMsg, errMsg].filter(Boolean).join(': ');
+                        if (!msg) msg = 'Randevu oluşturulurken hata oluştu.';
+                        this.showError(msg);
                     }
                 },
                 error: () => {
