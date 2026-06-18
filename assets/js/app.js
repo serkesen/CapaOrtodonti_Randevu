@@ -186,6 +186,23 @@
             $select.empty().append('<option value="">Hekim Seçiniz...</option>');
 
             if (doctors && doctors.length > 0) {
+                // Manuel hekim siralamasi (User.ID'ye gore). Listede olmayanlar sona, API sirasiyla.
+                const doctorOrder = [
+                    'N0NyaEswbDR0dEQwL1h4Z2xKTzVydz09', // Semra Can Erkesen
+                    'b3dqbU9oM3VFUGg3SFZ1eG9IMjlLUT09', // Özgür Yıldız
+                    'L1lMdldJTjBmb3ZxOWNBNm5wNHlydz09', // Kübra Bozacı
+                    'eXFoNHN4eHVPeVBvSXRaNWpmRDkvZz09', // Muhammed Furkan Özden
+                    'ZmFPYkFTemhjQWFXWnJmeTJwMm5lZz09', // Sahra Yıldırımer
+                ];
+                doctors = doctors.slice().sort((a, b) => {
+                    const ia = doctorOrder.indexOf(a.User.ID);
+                    const ib = doctorOrder.indexOf(b.User.ID);
+                    if (ia === -1 && ib === -1) return 0;
+                    if (ia === -1) return 1;
+                    if (ib === -1) return -1;
+                    return ia - ib;
+                });
+
                 doctors.forEach(doctor => {
                     const fullName = `${doctor.User.FirstName} ${doctor.User.LastName}`;
                     const nearestDay = doctor.NearestDay?.Date ?
