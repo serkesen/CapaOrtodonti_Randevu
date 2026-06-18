@@ -1182,3 +1182,7 @@ body.page-id-8830 .page-header { display: none !important; }
     white-space: nowrap !important;
     border: 0 !important;
 }
+
+
+/* Randevu sayfasi: acilista istemsiz scroll fix (smooth kapat) */
+html:has(body.page-id-8830) { scroll-behavior: auto !important; }

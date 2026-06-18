@@ -1,6 +1,19 @@
 ; (function ($) {
     'use strict';
 
+    // Randevu sayfasi: acilista istemsiz scroll'u engelle
+    if (document.body && document.body.classList.contains('page-id-8830')) {
+        var __dsResetScroll = function () {
+            if (window.scrollY > 0) { window.scrollTo(0, 0); }
+        };
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', __dsResetScroll);
+        } else {
+            __dsResetScroll();
+        }
+        window.addEventListener('load', __dsResetScroll);
+    }
+
     const DentSoftApp = {
         config: window.dentsoftConfig || {},
         currentStep: 1,
