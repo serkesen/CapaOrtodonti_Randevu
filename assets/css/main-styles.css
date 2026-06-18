@@ -1156,3 +1156,15 @@
 
 /* Randevu sayfasi: tema sayfa basligini (entry-title) gizle - SADECE bu sayfa (page-id-8830) */
 body.page-id-8830 .page-header { display: none !important; }
+
+
+/* ===== Dropdown dikey kisaltma: satir bosluklarini azalt (avatar kalktigi icin) ===== */
+.dentsoft-doctor-dropdown .select2-results__options { padding: 8px !important; }
+.dentsoft-doctor-dropdown .select2-results__option { margin-bottom: 4px !important; }
+.dentsoft-doctor-item { padding: 8px 8px !important; }
+.dentsoft-doctor-name { margin-bottom: 2px !important; }
+.dentsoft-doctor-nearest { margin-bottom: 0 !important; }
+@media (max-width: 768px) {
+    .dentsoft-doctor-dropdown .select2-results__options { padding: 6px !important; }
+    .dentsoft-doctor-item { padding: 7px 6px !important; }
+}

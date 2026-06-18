@@ -260,11 +260,12 @@
         formatNearestDay(date, time) {
             const dateObj = new Date(date);
             const gunler = ['Paz', 'Pzt', 'Sal', 'Çar', 'Per', 'Cum', 'Cmt'];
+            const aylar = ['Oca', 'Şub', 'Mar', 'Nis', 'May', 'Haz', 'Tem', 'Ağu', 'Eyl', 'Eki', 'Kas', 'Ara'];
             const dayShort = gunler[dateObj.getDay()];
-            const dd = String(dateObj.getDate()).padStart(2, '0');
-            const mm = String(dateObj.getMonth() + 1).padStart(2, '0');
+            const dayNum = dateObj.getDate();
+            const monthShort = aylar[dateObj.getMonth()];
             const timeStr = time ? ` - ${time}` : '';
-            return `En erken: ${dd}.${mm} ${dayShort}${timeStr}`;
+            return `En erken: ${dayNum} ${monthShort} ${dayShort}${timeStr}`;
         },
 
         onDoctorChange() {
