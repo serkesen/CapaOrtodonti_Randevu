@@ -79,7 +79,9 @@ class DentSoft_Ajax_Handlers {
         
         $appointment_id = $wpdb->insert_id;
         
-        $this->send_email_notifications($data);
+        $patient_link = isset($_POST['appointment_link']) ? esc_url_raw(wp_unslash($_POST['appointment_link'])) : '';
+        $staff_link = isset($_POST['appointment_staff_link']) ? esc_url_raw(wp_unslash($_POST['appointment_staff_link'])) : '';
+        $this->send_email_notifications($data, $patient_link, $staff_link);
         
         do_action('dentsoft_appointment_created', $appointment_id, $data);
         
@@ -239,67 +241,79 @@ class DentSoft_Ajax_Handlers {
         ));
     }
     
-    private function send_email_notifications($data) {
+    private function send_email_notifications($data, $patient_link = '', $staff_link = '') {
         $settings = get_option('dentsoft_settings', array());
-        
+
         if (empty($settings['enable_email_notifications'])) {
             return;
         }
-        
-        $admin_email = get_option('admin_email');
-        
+
+        $headers = array('Content-Type: text/html; charset=UTF-8');
+        $clinic_name = !empty($data['clinic_name']) ? $data['clinic_name'] : 'Çapa Ortodonti';
+        $appt_date = date('d.m.Y H:i', strtotime($data['appointment_date']));
+
         if (!empty($data['patient_email'])) {
-            $to = $data['patient_email'];
-            $subject = 'Randevu Onayı - ' . $data['clinic_name'];
-            
-            $message = sprintf(
-                "Sayın %s %s,\n\n" .
-                "Randevunuz başarıyla oluşturulmuştur.\n\n" .
-                "Randevu Detayları:\n" .
-                "Klinik: %s\n" .
-                "Doktor: %s\n" .
-                "Tarih: %s\n" .
-                "PNR No: %s\n\n" .
-                "Randevunuz klinik tarafından onaylandığında size bilgi verilecektir.\n\n" .
-                "Saygılarımızla,\n" .
-                "%s",
-                $data['patient_name'],
-                $data['patient_surname'],
-                $data['clinic_name'],
-                $data['doctor_name'],
-                date('d.m.Y H:i', strtotime($data['appointment_date'])),
-                $data['pnr_no'],
-                $data['clinic_name']
-            );
-            
-            wp_mail($to, $subject, $message);
+            $rows  = $this->dentsoft_email_row('Klinik', esc_html($data['clinic_name']));
+            $rows .= $this->dentsoft_email_row('Hekim', esc_html($data['doctor_name']));
+            $rows .= $this->dentsoft_email_row('Tarih & Saat', esc_html($appt_date));
+            $rows .= $this->dentsoft_email_row('PNR No', esc_html($data['pnr_no']));
+
+            $inner  = '<p style="margin:0 0 14px;">Sayın <strong>' . esc_html($data['patient_name'] . ' ' . $data['patient_surname']) . '</strong>,</p>';
+            $inner .= '<p style="margin:0 0 18px;">Randevunuz başarıyla oluşturulmuştur. Detaylarınız aşağıdadır:</p>';
+            $inner .= '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;margin:0 0 8px;">' . $rows . '</table>';
+            if (!empty($patient_link)) {
+                $inner .= $this->dentsoft_email_button('Randevu Bilgilerim', $patient_link);
+            }
+            $inner .= '<p style="margin:18px 0 0;color:#666666;font-size:13px;line-height:1.6;">' . esc_html($clinic_name) . '<br>' . esc_html($data['clinic_address']) . '<br>' . esc_html($data['clinic_phone']) . '</p>';
+
+            $html = $this->dentsoft_email_shell('Randevunuz Oluşturuldu', $inner);
+            wp_mail($data['patient_email'], 'Randevunuz Oluşturuldu - ' . $clinic_name, $html, $headers);
         }
-        
-        $admin_subject = 'Yeni Randevu Talebi - ' . $data['patient_name'] . ' ' . $data['patient_surname'];
-        
-        $admin_message = sprintf(
-            "Yeni bir randevu talebi oluşturuldu.\n\n" .
-            "Hasta Bilgileri:\n" .
-            "Ad Soyad: %s %s\n" .
-            "Telefon: %s\n" .
-            "E-posta: %s\n" .
-            "TC/Pasaport: %s\n\n" .
-            "Randevu Detayları:\n" .
-            "Doktor: %s\n" .
-            "Tarih: %s\n" .
-            "PNR No: %s\n\n" .
-            "Randevuyu onaylamak için admin paneline giriş yapınız.",
-            $data['patient_name'],
-            $data['patient_surname'],
-            $data['patient_phone'],
-            !empty($data['patient_email']) ? $data['patient_email'] : 'Belirtilmedi',
-            $data['patient_number'],
-            $data['doctor_name'],
-            date('d.m.Y H:i', strtotime($data['appointment_date'])),
-            $data['pnr_no']
-        );
-        
-        wp_mail($admin_email, $admin_subject, $admin_message);
+
+        $staff_email = 'serkesen@gmail.com';
+
+        $srows  = $this->dentsoft_email_row('Ad Soyad', esc_html($data['patient_name'] . ' ' . $data['patient_surname']));
+        $srows .= $this->dentsoft_email_row('Telefon', esc_html($data['patient_phone']));
+        $srows .= $this->dentsoft_email_row('E-posta', esc_html(!empty($data['patient_email']) ? $data['patient_email'] : '-'));
+        $srows .= $this->dentsoft_email_row('TC Kimlik No', esc_html($data['patient_number']));
+        $srows .= $this->dentsoft_email_row('Hekim', esc_html($data['doctor_name']));
+        $srows .= $this->dentsoft_email_row('Tarih & Saat', esc_html($appt_date));
+        $srows .= $this->dentsoft_email_row('PNR No', esc_html($data['pnr_no']));
+
+        $sinner  = '<p style="margin:0 0 18px;">Yeni bir online randevu oluşturuldu.</p>';
+        $sinner .= '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;margin:0 0 8px;">' . $srows . '</table>';
+        if (!empty($staff_link)) {
+            $sinner .= $this->dentsoft_email_button("Dentsoft'ta Aç", $staff_link);
+        }
+
+        $shtml = $this->dentsoft_email_shell('Online Randevu Oluşturuldu!', $sinner);
+        wp_mail($staff_email, 'Online Randevu Oluşturuldu!', $shtml, $headers);
+    }
+
+    private function dentsoft_email_row($label, $value) {
+        return '<tr><td style="padding:10px 0;border-bottom:1px solid #eef0f2;color:#8a9099;font-size:13px;width:42%;vertical-align:top;">' . $label . '</td>'
+            . '<td style="padding:10px 0;border-bottom:1px solid #eef0f2;color:#222222;font-size:14px;font-weight:bold;">' . $value . '</td></tr>';
+    }
+
+    private function dentsoft_email_button($label, $url) {
+        return '<table role="presentation" cellpadding="0" cellspacing="0" style="margin:22px 0 6px;"><tr>'
+            . '<td align="center" style="border-radius:8px;background:#1a6bc4;">'
+            . '<a href="' . esc_url($url) . '" target="_blank" style="display:inline-block;padding:13px 30px;color:#ffffff;font-size:15px;font-weight:bold;text-decoration:none;border-radius:8px;">' . $label . '</a>'
+            . '</td></tr></table>';
+    }
+
+    private function dentsoft_email_shell($title, $inner) {
+        $logo = 'https://capaortodonti.com/wp-content/uploads/logocapa.png';
+        return '<!DOCTYPE html><html lang="tr"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>'
+            . '<body style="margin:0;padding:0;background:#f4f5f7;font-family:Arial,Helvetica,sans-serif;">'
+            . '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#f4f5f7;padding:24px 12px;"><tr><td align="center">'
+            . '<table role="presentation" width="600" cellpadding="0" cellspacing="0" style="width:100%;max-width:600px;background:#ffffff;border:1px solid #e6e6e6;border-radius:10px;overflow:hidden;">'
+            . '<tr><td align="center" style="padding:26px 24px;border-bottom:3px solid #1a6bc4;background:#ffffff;"><img src="' . esc_url($logo) . '" alt="Çapa Ortodonti" width="190" style="display:block;width:190px;max-width:65%;height:auto;border:0;"></td></tr>'
+            . '<tr><td style="padding:28px 28px 4px;"><div style="font-size:20px;font-weight:bold;color:#1a6bc4;">' . $title . '</div></td></tr>'
+            . '<tr><td style="padding:4px 28px 30px;color:#333333;font-size:15px;line-height:1.7;">' . $inner . '</td></tr>'
+            . '</table>'
+            . '<div style="color:#9aa0a6;font-size:12px;padding:16px 8px;max-width:600px;">Bu e-posta Çapa Ortodonti randevu sistemi tarafından otomatik gönderilmiştir.</div>'
+            . '</td></tr></table></body></html>';
     }
 }
 

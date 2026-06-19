@@ -658,9 +658,32 @@
         },
 
         saveToDatabase(appointmentData) {
+            let appointmentLink = '';
+            try {
+                const clinicId = appointmentData.Clinic.ID;
+                const apptId = appointmentData.Appointment.ID;
+                if (clinicId && apptId) {
+                    appointmentLink = 'https://clinic.dentsoft.com.tr/Print/' + clinicId + '/AR/' + apptId;
+                }
+            } catch (e) {
+                appointmentLink = '';
+            }
+
+            let staffLink = '';
+            try {
+                const patientId = appointmentData.Patient && appointmentData.Patient.ID;
+                if (patientId) {
+                    staffLink = 'https://clinic.dentsoft.com.tr/Patient/Appointment/' + patientId;
+                }
+            } catch (e) {
+                staffLink = '';
+            }
+
             const data = {
                 action: 'dentsoft_save_appointment',
                 nonce: this.config.nonce,
+                appointment_link: appointmentLink,
+                appointment_staff_link: staffLink,
                 patient_number: $('#dentsoft-patient-number').val(),
                 patient_name: $('#dentsoft-patient-name').val(),
                 patient_surname: $('#dentsoft-patient-surname').val(),
