@@ -284,7 +284,7 @@ $primary_light = hexToRgba($primary_color, 0.1);
                             <div class="dentsoft-form-row">
                                 <div class="dentsoft-form-group">
                                     <label for="dentsoft-patient-number" class="dentsoft-label">
-                                        TC Kimlik / Pasaport No <span class="required">*</span>
+                                        TC Kimlik No <span class="required">*</span>
                                     </label>
                                     <input 
                                         type="text" 

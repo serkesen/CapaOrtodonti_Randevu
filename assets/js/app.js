@@ -713,18 +713,61 @@
         },
 
         validateForm() {
-            const requiredFields = [
-                { id: '#dentsoft-patient-number', name: 'TC Kimlik / Pasaport No' },
-                { id: '#dentsoft-patient-name', name: 'Ad' },
-                { id: '#dentsoft-patient-surname', name: 'Soyad' },
-                { id: '#dentsoft-patient-phone', name: 'Telefon' }
-            ];
+            const numberValue = ($('#dentsoft-patient-number').val() || '').trim();
+            const nameValue = ($('#dentsoft-patient-name').val() || '').trim();
+            const surnameValue = ($('#dentsoft-patient-surname').val() || '').trim();
+            const phoneValue = ($('#dentsoft-patient-phone').val() || '').trim();
 
-            for (const field of requiredFields) {
-                const value = $(field.id).val();
-                if (!value || value.trim() === '') {
-                    this.showError(`${field.name} alanı zorunludur.`);
-                    $(field.id).focus();
+            if (!numberValue) {
+                this.showError('TC Kimlik No alanı zorunludur.');
+                $('#dentsoft-patient-number').focus();
+                return false;
+            }
+            if (!this.isValidTCKN(numberValue)) {
+                this.showError('Geçerli bir TC Kimlik No giriniz (11 haneli).');
+                $('#dentsoft-patient-number').focus();
+                return false;
+            }
+
+            if (!nameValue) {
+                this.showError('Ad alanı zorunludur.');
+                $('#dentsoft-patient-name').focus();
+                return false;
+            }
+            if (!surnameValue) {
+                this.showError('Soyad alanı zorunludur.');
+                $('#dentsoft-patient-surname').focus();
+                return false;
+            }
+
+            if (!phoneValue) {
+                this.showError('Telefon alanı zorunludur.');
+                $('#dentsoft-patient-phone').focus();
+                return false;
+            }
+            const phoneDigits = phoneValue.replace(/[^0-9]/g, '');
+            const normalizedPhone = (phoneDigits.length === 11 && phoneDigits.charAt(0) === '0') ? phoneDigits.substring(1) : phoneDigits;
+            if (!/^5[0-9]{9}$/.test(normalizedPhone)) {
+                this.showError('Geçerli bir telefon numarası giriniz (5XX XXX XX XX).');
+                $('#dentsoft-patient-phone').focus();
+                return false;
+            }
+
+            const emailValue = ($('#dentsoft-patient-email').val() || '').trim();
+            if (emailValue && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailValue)) {
+                this.showError('Geçerli bir e-posta adresi giriniz.');
+                $('#dentsoft-patient-email').focus();
+                return false;
+            }
+
+            const birthdayValue = $('#dentsoft-patient-birthday').val();
+            if (birthdayValue) {
+                const birthDate = new Date(birthdayValue);
+                const today = new Date();
+                today.setHours(0, 0, 0, 0);
+                if (isNaN(birthDate.getTime()) || birthDate > today || birthDate.getFullYear() < 1900) {
+                    this.showError('Geçerli bir doğum tarihi giriniz.');
+                    $('#dentsoft-patient-birthday').focus();
                     return false;
                 }
             }
@@ -734,6 +777,18 @@
                 return false;
             }
 
+            return true;
+        },
+
+        isValidTCKN(value) {
+            if (!/^[1-9][0-9]{10}$/.test(value)) return false;
+            const d = value.split('').map(Number);
+            const oddSum = d[0] + d[2] + d[4] + d[6] + d[8];
+            const evenSum = d[1] + d[3] + d[5] + d[7];
+            const digit10 = (((oddSum * 7) - evenSum) % 10 + 10) % 10;
+            if (digit10 !== d[9]) return false;
+            const sumFirst10 = d.slice(0, 10).reduce((a, b) => a + b, 0);
+            if (sumFirst10 % 10 !== d[10]) return false;
             return true;
         },
 
