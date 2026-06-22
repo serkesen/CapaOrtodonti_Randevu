@@ -48,6 +48,11 @@
             $(document).on('click', '.dentsoft-btn-prev-week', () => this.changeWeek(-1));
             $(document).on('click', '.dentsoft-btn-next-week', () => this.changeWeek(1));
             $(document).on('click', '.dentsoft-time-slot', (e) => this.selectTimeSlot(e));
+            $(document).on('click', '.dentsoft-date-chip', (e) => {
+                const $chip = $(e.currentTarget);
+                if ($chip.hasClass('disabled')) return;
+                this.selectDateChip($chip.data('date'));
+            });
 
             $('#dentsoft-submit-btn').on('click', () => this.submitAppointment());
             $('#dentsoft-new-appointment-btn').on('click', () => this.resetForm());
@@ -375,54 +380,76 @@
             const $container = $('#dentsoft-calendar-container');
             $container.empty();
 
-            const $table = $('<table>').addClass('dentsoft-calendar-table');
-            const $thead = $('<thead>');
-            const $tbody = $('<tbody>');
-            const $headerRow = $('<tr>');
-            const $timeRow = $('<tr>');
+            this.currentSlots = slots;
+
+            const gunler = ['Paz', 'Pzt', 'Sal', 'Çar', 'Per', 'Cum', 'Cmt'];
+            const aylar = ['Oca', 'Şub', 'Mar', 'Nis', 'May', 'Haz', 'Tem', 'Ağu', 'Eyl', 'Eki', 'Kas', 'Ara'];
+
+            const $strip = $('<div>').addClass('dentsoft-date-strip');
+            let firstAvailable = null;
 
             Object.keys(slots).forEach(date => {
                 const dateObj = new Date(date);
-                const dayName = dateObj.toLocaleDateString('tr-TR', { weekday: 'short' });
+                const dayName = gunler[dateObj.getDay()];
                 const dayNum = dateObj.getDate();
-                const monthName = dateObj.toLocaleDateString('tr-TR', { month: 'short' });
+                const monthName = aylar[dateObj.getMonth()];
+                const hasAvailable = slots[date].some(s => s.Type === 'Available');
+                if (hasAvailable && !firstAvailable) firstAvailable = date;
 
-                $headerRow.append(`
-                    <th>
-                        <div class="calendar-date-header">
-                            <span class="day-name">${dayName}</span>
-                            <span class="day-num">${dayNum} ${monthName}</span>
-                        </div>
-                    </th>
-                `);
+                const $chip = $('<button>')
+                    .addClass('dentsoft-date-chip')
+                    .attr('type', 'button')
+                    .attr('data-date', date)
+                    .html(`<span class="chip-day">${dayName}</span><span class="chip-date">${dayNum} ${monthName}</span>`);
 
-                const $timeCell = $('<td>');
-                const $timeList = $('<div>').addClass('dentsoft-time-list');
+                if (!hasAvailable) {
+                    $chip.addClass('disabled').prop('disabled', true);
+                }
 
-                slots[date].forEach(slot => {
-                    const isAvailable = slot.Type === 'Available';
-                    const $timeBtn = $('<button>')
-                        .addClass('dentsoft-time-slot')
-                        .attr('type', 'button')
-                        .data('date', date)
-                        .data('time', slot.Time.Begin)
-                        .text(slot.Time.Begin);
-
-                    if (!isAvailable) {
-                        $timeBtn.addClass('disabled').prop('disabled', true);
-                    }
-
-                    $timeList.append($timeBtn);
-                });
-
-                $timeCell.append($timeList);
-                $timeRow.append($timeCell);
+                $strip.append($chip);
             });
 
-            $thead.append($headerRow);
-            $tbody.append($timeRow);
-            $table.append($thead).append($tbody);
-            $container.append($table);
+            const $grid = $('<div>').addClass('dentsoft-time-grid');
+            $container.append($strip).append($grid);
+
+            const defaultDate = firstAvailable || Object.keys(slots)[0];
+            if (defaultDate) {
+                this.selectDateChip(defaultDate);
+            }
+        },
+
+        selectDateChip(date) {
+            if (!date) return;
+            $('.dentsoft-date-chip').removeClass('active');
+            $('.dentsoft-date-chip[data-date="' + date + '"]').addClass('active');
+            this.selectedData.date = date;
+            this.renderTimeGrid(date);
+        },
+
+        renderTimeGrid(date) {
+            const $grid = $('.dentsoft-time-grid');
+            $grid.empty();
+
+            const daySlots = (this.currentSlots && this.currentSlots[date]) ? this.currentSlots[date] : [];
+
+            daySlots.forEach(slot => {
+                const isAvailable = slot.Type === 'Available';
+                const $timeBtn = $('<button>')
+                    .addClass('dentsoft-time-slot')
+                    .attr('type', 'button')
+                    .data('date', date)
+                    .data('time', slot.Time.Begin)
+                    .text(slot.Time.Begin);
+
+                if (!isAvailable) {
+                    $timeBtn.addClass('disabled').prop('disabled', true);
+                }
+
+                $grid.append($timeBtn);
+            });
+
+            this.selectedData.time = null;
+            $('.dentsoft-btn-next').prop('disabled', true);
         },
 
         selectTimeSlot(e) {

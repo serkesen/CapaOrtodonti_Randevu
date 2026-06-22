@@ -1186,3 +1186,90 @@ body.page-id-8830 .page-header { display: none !important; }
 
 /* Randevu sayfasi: acilista istemsiz scroll fix (smooth kapat) */
 html:has(body.page-id-8830) { scroll-behavior: auto !important; }
+
+
+/* ===== A: tarih seridi + kompakt saat grid (mobile-first) ===== */
+
+/* Ic scroll kapat: secili gunun tum saatleri tek ekranda */
+.dentsoft-calendar-container {
+    max-height: none !important;
+    overflow: visible !important;
+}
+
+/* Tarih seridi: yatay, mobilde saga kaydirma */
+.dentsoft-date-strip {
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scroll-snap-type: x proximity;
+    padding-bottom: 6px;
+    margin-bottom: 12px;
+}
+.dentsoft-date-strip::-webkit-scrollbar { height: 5px; }
+.dentsoft-date-strip::-webkit-scrollbar-thumb {
+    background: var(--dentsoft-border);
+    border-radius: 10px;
+}
+
+/* Gun chip'i */
+.dentsoft-date-chip {
+    flex: 0 0 auto;
+    min-width: 64px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    padding: 8px 12px;
+    background: var(--dentsoft-white);
+    border: 2px solid var(--dentsoft-border);
+    border-radius: var(--dentsoft-radius-sm);
+    cursor: pointer;
+    scroll-snap-align: start;
+    transition: all 0.2s ease;
+}
+.dentsoft-date-chip:hover:not(.disabled):not(.active) {
+    border-color: var(--dentsoft-primary);
+    background: var(--dentsoft-primary-light);
+}
+.dentsoft-date-chip .chip-day {
+    font-size: 11px;
+    text-transform: uppercase;
+    color: var(--dentsoft-secondary);
+    line-height: 1.2;
+}
+.dentsoft-date-chip .chip-date {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--dentsoft-dark);
+    line-height: 1.2;
+    white-space: nowrap;
+}
+.dentsoft-date-chip.active {
+    background: var(--dentsoft-primary);
+    border-color: var(--dentsoft-primary);
+}
+.dentsoft-date-chip.active .chip-day,
+.dentsoft-date-chip.active .chip-date {
+    color: var(--dentsoft-white);
+}
+.dentsoft-date-chip.disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+    background: var(--dentsoft-light);
+}
+
+/* Saat grid: auto-fill (mobilde ~4-5 sutun, masaustunde otomatik coklu) */
+.dentsoft-time-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(64px, 1fr));
+    gap: 8px;
+}
+
+/* Saat kutusu kompakt (~32px) - mevcut time-slot padding'ini ezer */
+.dentsoft-time-grid .dentsoft-time-slot {
+    padding: 7px 4px !important;
+    font-size: 13px !important;
+    text-align: center !important;
+    white-space: nowrap !important;
+}
