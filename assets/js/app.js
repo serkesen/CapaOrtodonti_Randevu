@@ -1117,6 +1117,12 @@
                 success: (response) => {
                     this.hideLoading();
 
+                    $.ajax({
+                        url: this.config.ajaxUrl,
+                        method: 'POST',
+                        data: { action: 'dentsoft_cancel_appointment', nonce: this.config.nonce, pnr_no: pnr }
+                    });
+
                     Swal.fire({
                         icon: 'success',
                         title: 'Başarılı!',

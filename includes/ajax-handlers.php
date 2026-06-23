@@ -14,6 +14,9 @@ class DentSoft_Ajax_Handlers {
         add_action('wp_ajax_dentsoft_update_appointment_status', array($this, 'update_appointment_status'));
         
         add_action('wp_ajax_dentsoft_delete_appointment', array($this, 'delete_appointment'));
+
+        add_action('wp_ajax_dentsoft_cancel_appointment', array($this, 'cancel_appointment_notify'));
+        add_action('wp_ajax_nopriv_dentsoft_cancel_appointment', array($this, 'cancel_appointment_notify'));
     }
     
     private function verify_nonce() {
@@ -241,6 +244,64 @@ class DentSoft_Ajax_Handlers {
         ));
     }
     
+    public function cancel_appointment_notify() {
+        $this->verify_nonce();
+
+        $pnr = isset($_POST['pnr_no']) ? sanitize_text_field(wp_unslash($_POST['pnr_no'])) : '';
+        if (empty($pnr)) {
+            wp_send_json_error(array('message' => 'PNR gerekli.'));
+            return;
+        }
+
+        global $wpdb;
+        $row = $wpdb->get_row($wpdb->prepare(
+            "SELECT * FROM {$wpdb->prefix}dentsoft_appointments WHERE pnr_no = %s ORDER BY id DESC LIMIT 1",
+            $pnr
+        ), ARRAY_A);
+
+        if ($row) {
+            $wpdb->update(
+                $wpdb->prefix . 'dentsoft_appointments',
+                array('appointment_status' => 'cancelled'),
+                array('pnr_no' => $pnr),
+                array('%s'),
+                array('%s')
+            );
+        }
+
+        $this->send_cancellation_notifications($pnr, $row);
+
+        wp_send_json_success(array('message' => 'Iptal bildirimi islendi.'));
+    }
+
+    private function send_cancellation_notifications($pnr, $row) {
+        $settings = get_option('dentsoft_settings', array());
+        if (empty($settings['enable_email_notifications'])) {
+            return;
+        }
+
+        $headers = array('Content-Type: text/html; charset=UTF-8');
+        $appt_date = (!empty($row['appointment_date'])) ? date('d.m.Y H:i', strtotime($row['appointment_date'])) : '-';
+        $doctor = (!empty($row['doctor_name'])) ? $row['doctor_name'] : '-';
+
+        $staff_email = 'serkesen@gmail.com';
+
+        $srows  = $this->dentsoft_email_row('Ad Soyad', esc_html($row ? trim($row['patient_name'] . ' ' . $row['patient_surname']) : '-'));
+        $srows .= $this->dentsoft_email_row('Telefon', esc_html(($row && !empty($row['patient_phone'])) ? $row['patient_phone'] : '-'));
+        $srows .= $this->dentsoft_email_row('Hekim', esc_html($doctor));
+        $srows .= $this->dentsoft_email_row('Tarih & Saat', esc_html($appt_date));
+        $srows .= $this->dentsoft_email_row('PNR No', esc_html($pnr));
+
+        $sinner  = '<p style="margin:0 0 18px;">Bir online randevu iptal edildi.</p>';
+        $sinner .= '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;margin:0 0 8px;">' . $srows . '</table>';
+        if (!$row) {
+            $sinner .= '<p style="margin:18px 0 0;color:#999999;font-size:12px;">(Not: Bu PNR için sistemde kayıt bulunamadı; randevu online dışı alınmış olabilir.)</p>';
+        }
+
+        $html = $this->dentsoft_email_shell('Randevu İptali', $sinner);
+        wp_mail($staff_email, 'Randevu İptali - ' . $pnr, $html, $headers);
+    }
+
     private function send_email_notifications($data, $patient_link = '', $staff_link = '') {
         $settings = get_option('dentsoft_settings', array());
 
