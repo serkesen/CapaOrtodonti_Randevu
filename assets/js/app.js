@@ -48,11 +48,6 @@
             $(document).on('click', '.dentsoft-btn-prev-week', () => this.changeWeek(-1));
             $(document).on('click', '.dentsoft-btn-next-week', () => this.changeWeek(1));
             $(document).on('click', '.dentsoft-time-slot', (e) => this.selectTimeSlot(e));
-            $(document).on('click', '.dentsoft-date-chip', (e) => {
-                const $chip = $(e.currentTarget);
-                if ($chip.hasClass('disabled')) return;
-                this.selectDateChip($chip.data('date'));
-            });
 
             $('#dentsoft-submit-btn').on('click', () => this.submitAppointment());
             $('#dentsoft-new-appointment-btn').on('click', () => this.resetForm());
@@ -380,143 +375,54 @@
             const $container = $('#dentsoft-calendar-container');
             $container.empty();
 
-            this.currentSlots = slots;
-            this.loadingMore = false;
-            this.noMoreSlots = false;
-
-            const $strip = $('<div>').addClass('dentsoft-date-strip');
-            let firstAvailable = null;
+            const $table = $('<table>').addClass('dentsoft-calendar-table');
+            const $thead = $('<thead>');
+            const $tbody = $('<tbody>');
+            const $headerRow = $('<tr>');
+            const $timeRow = $('<tr>');
 
             Object.keys(slots).forEach(date => {
-                if (!firstAvailable && slots[date].some(s => s.Type === 'Available')) {
-                    firstAvailable = date;
-                }
-                $strip.append(this.buildDateChip(date));
-            });
+                const dateObj = new Date(date);
+                const dayName = dateObj.toLocaleDateString('tr-TR', { weekday: 'short' });
+                const dayNum = dateObj.getDate();
+                const monthName = dateObj.toLocaleDateString('tr-TR', { month: 'short' });
 
-            const $grid = $('<div>').addClass('dentsoft-time-grid');
-            $container.append($strip).append($grid);
+                $headerRow.append(`
+                    <th>
+                        <div class="calendar-date-header">
+                            <span class="day-name">${dayName}</span>
+                            <span class="day-num">${dayNum} ${monthName}</span>
+                        </div>
+                    </th>
+                `);
 
-            $strip.on('scroll', () => {
-                const el = $strip[0];
-                if (el.scrollLeft + el.clientWidth >= el.scrollWidth - 40) {
-                    this.loadMoreSlots();
-                }
-            });
+                const $timeCell = $('<td>');
+                const $timeList = $('<div>').addClass('dentsoft-time-list');
 
-            const defaultDate = firstAvailable || Object.keys(slots)[0];
-            if (defaultDate) {
-                this.selectDateChip(defaultDate);
-            }
-        },
+                slots[date].forEach(slot => {
+                    const isAvailable = slot.Type === 'Available';
+                    const $timeBtn = $('<button>')
+                        .addClass('dentsoft-time-slot')
+                        .attr('type', 'button')
+                        .data('date', date)
+                        .data('time', slot.Time.Begin)
+                        .text(slot.Time.Begin);
 
-        buildDateChip(date) {
-            const gunler = ['Paz', 'Pzt', 'Sal', 'Çar', 'Per', 'Cum', 'Cmt'];
-            const aylar = ['Oca', 'Şub', 'Mar', 'Nis', 'May', 'Haz', 'Tem', 'Ağu', 'Eyl', 'Eki', 'Kas', 'Ara'];
-            const dateObj = new Date(date);
-            const dayName = gunler[dateObj.getDay()];
-            const dayNum = dateObj.getDate();
-            const monthName = aylar[dateObj.getMonth()];
-            const hasAvailable = this.currentSlots[date].some(s => s.Type === 'Available');
-
-            const $chip = $('<button>')
-                .addClass('dentsoft-date-chip')
-                .attr('type', 'button')
-                .attr('data-date', date)
-                .html(`<span class="chip-day">${dayName}</span><span class="chip-date">${dayNum} ${monthName}</span>`);
-
-            if (!hasAvailable) {
-                $chip.addClass('disabled').prop('disabled', true);
-            }
-            return $chip;
-        },
-
-        loadMoreSlots() {
-            if (this.loadingMore || this.noMoreSlots || !this.currentSlots) return;
-
-            const dates = Object.keys(this.currentSlots).sort();
-            if (dates.length === 0 || dates.length >= 60) {
-                this.noMoreSlots = true;
-                return;
-            }
-
-            const nextDate = new Date(dates[dates.length - 1]);
-            nextDate.setDate(nextDate.getDate() + 1);
-            const startStr = this.formatDate(nextDate);
-
-            this.loadingMore = true;
-
-            const clinicId = this.selectedData.clinic.ID;
-            const doctorId = this.selectedData.doctor.User.ID;
-
-            const ajaxSettings = {
-                url: `${this.config.apiUrl}/Appointment/Doctor/${clinicId}/${doctorId}/${startStr}/${this.dateRange}`,
-                method: 'GET',
-                dataType: 'json',
-                success: (response) => {
-                    this.loadingMore = false;
-                    if (response.Response && response.Response[0] && response.Response[0].Slot) {
-                        const newSlots = response.Response[0].Slot;
-                        const newDates = Object.keys(newSlots).filter(d => !this.currentSlots[d]).sort();
-                        if (newDates.length === 0) {
-                            this.noMoreSlots = true;
-                            return;
-                        }
-                        const $strip = $('.dentsoft-date-strip');
-                        newDates.forEach(d => {
-                            this.currentSlots[d] = newSlots[d];
-                            $strip.append(this.buildDateChip(d));
-                        });
-                    } else {
-                        this.noMoreSlots = true;
+                    if (!isAvailable) {
+                        $timeBtn.addClass('disabled').prop('disabled', true);
                     }
-                },
-                error: () => {
-                    this.loadingMore = false;
-                }
-            };
 
-            if (this.config.bearerToken && this.config.bearerToken.trim() !== '') {
-                ajaxSettings.headers = {
-                    'Authorization': `Bearer ${this.config.bearerToken}`
-                };
-            }
+                    $timeList.append($timeBtn);
+                });
 
-            $.ajax(ajaxSettings);
-        },
-
-        selectDateChip(date) {
-            if (!date) return;
-            $('.dentsoft-date-chip').removeClass('active');
-            $('.dentsoft-date-chip[data-date="' + date + '"]').addClass('active');
-            this.selectedData.date = date;
-            this.renderTimeGrid(date);
-        },
-
-        renderTimeGrid(date) {
-            const $grid = $('.dentsoft-time-grid');
-            $grid.empty();
-
-            const daySlots = (this.currentSlots && this.currentSlots[date]) ? this.currentSlots[date] : [];
-
-            daySlots.forEach(slot => {
-                const isAvailable = slot.Type === 'Available';
-                const $timeBtn = $('<button>')
-                    .addClass('dentsoft-time-slot')
-                    .attr('type', 'button')
-                    .data('date', date)
-                    .data('time', slot.Time.Begin)
-                    .text(slot.Time.Begin);
-
-                if (!isAvailable) {
-                    $timeBtn.addClass('disabled').prop('disabled', true);
-                }
-
-                $grid.append($timeBtn);
+                $timeCell.append($timeList);
+                $timeRow.append($timeCell);
             });
 
-            this.selectedData.time = null;
-            $('.dentsoft-btn-next').prop('disabled', true);
+            $thead.append($headerRow);
+            $tbody.append($timeRow);
+            $table.append($thead).append($tbody);
+            $container.append($table);
         },
 
         selectTimeSlot(e) {
