@@ -381,41 +381,108 @@
             $container.empty();
 
             this.currentSlots = slots;
-
-            const gunler = ['Paz', 'Pzt', 'Sal', 'Çar', 'Per', 'Cum', 'Cmt'];
-            const aylar = ['Oca', 'Şub', 'Mar', 'Nis', 'May', 'Haz', 'Tem', 'Ağu', 'Eyl', 'Eki', 'Kas', 'Ara'];
+            this.loadingMore = false;
+            this.noMoreSlots = false;
 
             const $strip = $('<div>').addClass('dentsoft-date-strip');
             let firstAvailable = null;
 
             Object.keys(slots).forEach(date => {
-                const dateObj = new Date(date);
-                const dayName = gunler[dateObj.getDay()];
-                const dayNum = dateObj.getDate();
-                const monthName = aylar[dateObj.getMonth()];
-                const hasAvailable = slots[date].some(s => s.Type === 'Available');
-                if (hasAvailable && !firstAvailable) firstAvailable = date;
-
-                const $chip = $('<button>')
-                    .addClass('dentsoft-date-chip')
-                    .attr('type', 'button')
-                    .attr('data-date', date)
-                    .html(`<span class="chip-day">${dayName}</span><span class="chip-date">${dayNum} ${monthName}</span>`);
-
-                if (!hasAvailable) {
-                    $chip.addClass('disabled').prop('disabled', true);
+                if (!firstAvailable && slots[date].some(s => s.Type === 'Available')) {
+                    firstAvailable = date;
                 }
-
-                $strip.append($chip);
+                $strip.append(this.buildDateChip(date));
             });
 
             const $grid = $('<div>').addClass('dentsoft-time-grid');
             $container.append($strip).append($grid);
 
+            $strip.on('scroll', () => {
+                const el = $strip[0];
+                if (el.scrollLeft + el.clientWidth >= el.scrollWidth - 40) {
+                    this.loadMoreSlots();
+                }
+            });
+
             const defaultDate = firstAvailable || Object.keys(slots)[0];
             if (defaultDate) {
                 this.selectDateChip(defaultDate);
             }
+        },
+
+        buildDateChip(date) {
+            const gunler = ['Paz', 'Pzt', 'Sal', 'Çar', 'Per', 'Cum', 'Cmt'];
+            const aylar = ['Oca', 'Şub', 'Mar', 'Nis', 'May', 'Haz', 'Tem', 'Ağu', 'Eyl', 'Eki', 'Kas', 'Ara'];
+            const dateObj = new Date(date);
+            const dayName = gunler[dateObj.getDay()];
+            const dayNum = dateObj.getDate();
+            const monthName = aylar[dateObj.getMonth()];
+            const hasAvailable = this.currentSlots[date].some(s => s.Type === 'Available');
+
+            const $chip = $('<button>')
+                .addClass('dentsoft-date-chip')
+                .attr('type', 'button')
+                .attr('data-date', date)
+                .html(`<span class="chip-day">${dayName}</span><span class="chip-date">${dayNum} ${monthName}</span>`);
+
+            if (!hasAvailable) {
+                $chip.addClass('disabled').prop('disabled', true);
+            }
+            return $chip;
+        },
+
+        loadMoreSlots() {
+            if (this.loadingMore || this.noMoreSlots || !this.currentSlots) return;
+
+            const dates = Object.keys(this.currentSlots).sort();
+            if (dates.length === 0 || dates.length >= 60) {
+                this.noMoreSlots = true;
+                return;
+            }
+
+            const nextDate = new Date(dates[dates.length - 1]);
+            nextDate.setDate(nextDate.getDate() + 1);
+            const startStr = this.formatDate(nextDate);
+
+            this.loadingMore = true;
+
+            const clinicId = this.selectedData.clinic.ID;
+            const doctorId = this.selectedData.doctor.User.ID;
+
+            const ajaxSettings = {
+                url: `${this.config.apiUrl}/Appointment/Doctor/${clinicId}/${doctorId}/${startStr}/${this.dateRange}`,
+                method: 'GET',
+                dataType: 'json',
+                success: (response) => {
+                    this.loadingMore = false;
+                    if (response.Response && response.Response[0] && response.Response[0].Slot) {
+                        const newSlots = response.Response[0].Slot;
+                        const newDates = Object.keys(newSlots).filter(d => !this.currentSlots[d]).sort();
+                        if (newDates.length === 0) {
+                            this.noMoreSlots = true;
+                            return;
+                        }
+                        const $strip = $('.dentsoft-date-strip');
+                        newDates.forEach(d => {
+                            this.currentSlots[d] = newSlots[d];
+                            $strip.append(this.buildDateChip(d));
+                        });
+                    } else {
+                        this.noMoreSlots = true;
+                    }
+                },
+                error: () => {
+                    this.loadingMore = false;
+                }
+            };
+
+            if (this.config.bearerToken && this.config.bearerToken.trim() !== '') {
+                ajaxSettings.headers = {
+                    'Authorization': `Bearer ${this.config.bearerToken}`
+                };
+            }
+
+            $.ajax(ajaxSettings);
         },
 
         selectDateChip(date) {
