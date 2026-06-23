@@ -24,7 +24,7 @@
             time: null
         },
         currentDate: new Date(),
-        dateRange: 6,
+        dateRange: 8,
 
         init() {
             if (!this.validateConfig()) return;
@@ -375,54 +375,108 @@
             const $container = $('#dentsoft-calendar-container');
             $container.empty();
 
-            const $table = $('<table>').addClass('dentsoft-calendar-table');
-            const $thead = $('<thead>');
-            const $tbody = $('<tbody>');
-            const $headerRow = $('<tr>');
-            const $timeRow = $('<tr>');
+            this.currentSlots = slots;
+            this.loadingMore = false;
+            this.noMoreSlots = false;
 
-            Object.keys(slots).forEach(date => {
-                const dateObj = new Date(date);
-                const dayName = dateObj.toLocaleDateString('tr-TR', { weekday: 'short' });
-                const dayNum = dateObj.getDate();
-                const monthName = dateObj.toLocaleDateString('tr-TR', { month: 'short' });
+            const $track = $('<div>').addClass('dentsoft-cal-track');
+            this.renderPages($track, Object.keys(slots).sort());
+            $container.append($track);
 
-                $headerRow.append(`
-                    <th>
-                        <div class="calendar-date-header">
-                            <span class="day-name">${dayName}</span>
-                            <span class="day-num">${dayNum} ${monthName}</span>
-                        </div>
-                    </th>
-                `);
-
-                const $timeCell = $('<td>');
-                const $timeList = $('<div>').addClass('dentsoft-time-list');
-
-                slots[date].forEach(slot => {
-                    const isAvailable = slot.Type === 'Available';
-                    const $timeBtn = $('<button>')
-                        .addClass('dentsoft-time-slot')
-                        .attr('type', 'button')
-                        .data('date', date)
-                        .data('time', slot.Time.Begin)
-                        .text(slot.Time.Begin);
-
-                    if (!isAvailable) {
-                        $timeBtn.addClass('disabled').prop('disabled', true);
-                    }
-
-                    $timeList.append($timeBtn);
-                });
-
-                $timeCell.append($timeList);
-                $timeRow.append($timeCell);
+            $track.on('scroll', () => {
+                const el = $track[0];
+                if (el.scrollLeft + el.clientWidth >= el.scrollWidth - 30) {
+                    this.loadMoreSlots();
+                }
             });
+        },
 
-            $thead.append($headerRow);
-            $tbody.append($timeRow);
-            $table.append($thead).append($tbody);
-            $container.append($table);
+        renderPages($track, dates) {
+            for (let i = 0; i < dates.length; i += 4) {
+                const $page = $('<div>').addClass('dentsoft-cal-page');
+                dates.slice(i, i + 4).forEach(date => $page.append(this.buildDayColumn(date)));
+                $track.append($page);
+            }
+        },
+
+        buildDayColumn(date) {
+            const gunler = ['Paz', 'Pzt', 'Sal', 'Çar', 'Per', 'Cum', 'Cmt'];
+            const aylar = ['Oca', 'Şub', 'Mar', 'Nis', 'May', 'Haz', 'Tem', 'Ağu', 'Eyl', 'Eki', 'Kas', 'Ara'];
+            const d = new Date(date);
+            const dayName = gunler[d.getDay()];
+            const dayNum = d.getDate();
+            const monthName = aylar[d.getMonth()];
+
+            const $col = $('<div>').addClass('dentsoft-day-col');
+            $col.append(`<div class="calendar-date-header"><span class="day-name">${dayName}</span><span class="day-num">${dayNum} ${monthName}</span></div>`);
+
+            const $list = $('<div>').addClass('dentsoft-time-list');
+            (this.currentSlots[date] || []).forEach(slot => {
+                const isAvailable = slot.Type === 'Available';
+                const $btn = $('<button>')
+                    .addClass('dentsoft-time-slot')
+                    .attr('type', 'button')
+                    .data('date', date)
+                    .data('time', slot.Time.Begin)
+                    .text(slot.Time.Begin);
+                if (!isAvailable) {
+                    $btn.addClass('disabled').prop('disabled', true);
+                }
+                $list.append($btn);
+            });
+            $col.append($list);
+            return $col;
+        },
+
+        loadMoreSlots() {
+            if (this.loadingMore || this.noMoreSlots || !this.currentSlots) return;
+
+            const dates = Object.keys(this.currentSlots).sort();
+            if (dates.length === 0 || dates.length >= 60) {
+                this.noMoreSlots = true;
+                return;
+            }
+
+            const nextDate = new Date(dates[dates.length - 1]);
+            nextDate.setDate(nextDate.getDate() + 1);
+            const startStr = this.formatDate(nextDate);
+
+            this.loadingMore = true;
+
+            const clinicId = this.selectedData.clinic.ID;
+            const doctorId = this.selectedData.doctor.User.ID;
+
+            const ajaxSettings = {
+                url: `${this.config.apiUrl}/Appointment/Doctor/${clinicId}/${doctorId}/${startStr}/${this.dateRange}`,
+                method: 'GET',
+                dataType: 'json',
+                success: (response) => {
+                    this.loadingMore = false;
+                    if (response.Response && response.Response[0] && response.Response[0].Slot) {
+                        const newSlots = response.Response[0].Slot;
+                        const newDates = Object.keys(newSlots).filter(dd => !this.currentSlots[dd]).sort();
+                        if (newDates.length === 0) {
+                            this.noMoreSlots = true;
+                            return;
+                        }
+                        newDates.forEach(dd => { this.currentSlots[dd] = newSlots[dd]; });
+                        this.renderPages($('.dentsoft-cal-track'), newDates);
+                    } else {
+                        this.noMoreSlots = true;
+                    }
+                },
+                error: () => {
+                    this.loadingMore = false;
+                }
+            };
+
+            if (this.config.bearerToken && this.config.bearerToken.trim() !== '') {
+                ajaxSettings.headers = {
+                    'Authorization': `Bearer ${this.config.bearerToken}`
+                };
+            }
+
+            $.ajax(ajaxSettings);
         },
 
         selectTimeSlot(e) {
