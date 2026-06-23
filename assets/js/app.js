@@ -511,6 +511,15 @@
                 return;
             }
 
+            // Toggle: zaten secili kutuya tekrar tiklayinca secimi kaldir
+            if ($btn.hasClass('selected')) {
+                $btn.removeClass('selected');
+                this.selectedData.date = null;
+                this.selectedData.time = null;
+                $('.dentsoft-btn-next').prop('disabled', true);
+                return;
+            }
+
             const date = $btn.data('date');
             const time = $btn.data('time');
 
