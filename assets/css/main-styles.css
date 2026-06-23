@@ -1280,7 +1280,20 @@ html:has(body.page-id-8830) { scroll-behavior: auto !important; }
 /* Mobil: hafta oklarini gizle (kaydirma + paging ile gezilir) */
 @media (max-width: 767px) {
     .dentsoft-calendar-controls { display: none !important; }
-    /* Dokunmatik scroll sirasinda hover ile yari-secili gorunumu engelle */
+    /* Dokunmatik: hover/focus ile yari-secili gorunumu engelle */
+    .dentsoft-cal-track .dentsoft-time-slot:hover:not(.selected):not(.disabled),
+    .dentsoft-cal-track .dentsoft-time-slot:focus:not(.selected):not(.disabled),
+    .dentsoft-cal-track .dentsoft-time-slot:active:not(.selected):not(.disabled) {
+        background: var(--dentsoft-white) !important;
+        border-color: var(--dentsoft-border) !important;
+        transform: none !important;
+        outline: none !important;
+        box-shadow: none !important;
+    }
+}
+
+/* Dokunmatik cihazlar: hover stilini tamamen kapat (parmak takilmasi) */
+@media (hover: none) {
     .dentsoft-cal-track .dentsoft-time-slot:hover:not(.selected):not(.disabled) {
         background: var(--dentsoft-white) !important;
         border-color: var(--dentsoft-border) !important;
