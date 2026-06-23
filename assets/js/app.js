@@ -381,14 +381,19 @@
 
             const $track = $('<div>').addClass('dentsoft-cal-track');
             this.renderPages($track, Object.keys(slots).sort());
-            $container.append($track);
+
+            const $dots = $('<div>').addClass('dentsoft-cal-dots');
+            $container.append($track).append($dots);
 
             $track.on('scroll', () => {
+                this.updateActiveDot();
                 const el = $track[0];
                 if (el.scrollLeft + el.clientWidth >= el.scrollWidth - 30) {
                     this.loadMoreSlots();
                 }
             });
+
+            this.buildDots();
         },
 
         renderPages($track, dates) {
@@ -399,8 +404,27 @@
             }
         },
 
+        buildDots() {
+            const $track = $('.dentsoft-cal-track');
+            const $dots = $('.dentsoft-cal-dots');
+            if (!$track.length || !$dots.length) return;
+            $dots.empty();
+            const n = $track.find('.dentsoft-cal-page').length;
+            for (let i = 0; i < n; i++) {
+                $dots.append($('<span>').addClass('dentsoft-cal-dot'));
+            }
+            this.updateActiveDot();
+        },
+
+        updateActiveDot() {
+            const t = $('.dentsoft-cal-track')[0];
+            if (!t) return;
+            const active = Math.round(t.scrollLeft / t.clientWidth);
+            $('.dentsoft-cal-dot').removeClass('active').eq(active).addClass('active');
+        },
+
         buildDayColumn(date) {
-            const gunler = ['Paz', 'Pzt', 'Sal', 'Çar', 'Per', 'Cum', 'Cmt'];
+            const gunler = ['Pazar', 'Pazartesi', 'Salı', 'Çarşamba', 'Perşembe', 'Cuma', 'Cumartesi'];
             const aylar = ['Oca', 'Şub', 'Mar', 'Nis', 'May', 'Haz', 'Tem', 'Ağu', 'Eyl', 'Eki', 'Kas', 'Ara'];
             const d = new Date(date);
             const dayName = gunler[d.getDay()];
@@ -408,7 +432,7 @@
             const monthName = aylar[d.getMonth()];
 
             const $col = $('<div>').addClass('dentsoft-day-col');
-            $col.append(`<div class="calendar-date-header"><span class="day-name">${dayName}</span><span class="day-num">${dayNum} ${monthName}</span></div>`);
+            $col.append(`<div class="calendar-date-header"><span class="day-num">${dayNum} ${monthName}</span><span class="day-name">${dayName}</span></div>`);
 
             const $list = $('<div>').addClass('dentsoft-time-list');
             (this.currentSlots[date] || []).forEach(slot => {
@@ -461,6 +485,7 @@
                         }
                         newDates.forEach(dd => { this.currentSlots[dd] = newSlots[dd]; });
                         this.renderPages($('.dentsoft-cal-track'), newDates);
+                        this.buildDots();
                     } else {
                         this.noMoreSlots = true;
                     }

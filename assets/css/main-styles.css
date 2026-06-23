@@ -1195,16 +1195,17 @@ html:has(body.page-id-8830) { scroll-behavior: auto !important; }
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
     scroll-snap-type: x mandatory;
+    scrollbar-width: none;
 }
-.dentsoft-cal-track::-webkit-scrollbar { height: 5px; }
-.dentsoft-cal-track::-webkit-scrollbar-thumb { background: var(--dentsoft-border); border-radius: 10px; }
+.dentsoft-cal-track::-webkit-scrollbar { display: none; }
 
-/* Sayfa = 4 kolon, tam genislik, snap noktasi */
+/* Sayfa = 4 kolon, tam genislik, kesin paging */
 .dentsoft-cal-page {
     flex: 0 0 100%;
     display: flex;
-    gap: 8px;
+    gap: 6px;
     scroll-snap-align: start;
+    scroll-snap-stop: always;
     padding: 0 2px;
 }
 
@@ -1214,41 +1215,60 @@ html:has(body.page-id-8830) { scroll-behavior: auto !important; }
     min-width: 0;
     display: flex;
     flex-direction: column;
-    gap: 6px;
+    gap: 4px;
 }
 .dentsoft-day-col .calendar-date-header {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 2px;
+    gap: 1px;
     padding-bottom: 6px;
-}
-.dentsoft-day-col .day-name {
-    font-size: 12px !important;
-    text-transform: uppercase !important;
-    color: var(--dentsoft-secondary) !important;
+    margin-bottom: 4px;
+    border-bottom: 2px solid var(--dentsoft-border);
 }
 .dentsoft-day-col .day-num {
     font-size: 14px !important;
-    font-weight: 600 !important;
+    font-weight: 700 !important;
     color: var(--dentsoft-dark) !important;
     white-space: nowrap !important;
+}
+.dentsoft-day-col .day-name {
+    font-size: 11px !important;
+    color: var(--dentsoft-secondary) !important;
 }
 .dentsoft-day-col .dentsoft-time-list {
     display: flex;
     flex-direction: column;
-    gap: 6px;
+    gap: 4px;
 }
 
 /* Kutu kompakt + yazi gorunur (global beyaz yaziyi ez) */
 .dentsoft-cal-track .dentsoft-time-slot {
-    padding: 6px 2px !important;
-    font-size: 13px !important;
+    padding: 4px 2px !important;
+    font-size: 12px !important;
     text-align: center !important;
     white-space: nowrap !important;
 }
 .dentsoft-cal-track .dentsoft-time-slot:not(.selected):not(.disabled) {
     color: var(--dentsoft-dark) !important;
+}
+
+/* Sayfa gostergesi (dots) */
+.dentsoft-cal-dots {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    padding-top: 14px;
+}
+.dentsoft-cal-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--dentsoft-border);
+    transition: background 0.2s ease;
+}
+.dentsoft-cal-dot.active {
+    background: var(--dentsoft-primary);
 }
 
 /* Dikey ic scroll kapat */
@@ -1257,7 +1277,7 @@ html:has(body.page-id-8830) { scroll-behavior: auto !important; }
     overflow: visible !important;
 }
 
-/* Mobil: hafta oklarini gizle (kaydirma ile gezilir) */
+/* Mobil: hafta oklarini gizle (kaydirma + paging ile gezilir) */
 @media (max-width: 767px) {
     .dentsoft-calendar-controls { display: none !important; }
 }
