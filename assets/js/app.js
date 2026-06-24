@@ -992,8 +992,7 @@
 
         hideQuerySection() {
             $('#dentsoft-query-section').hide().removeClass('active');
-            $('.dentsoft-step-content[data-step="1"]').addClass('active');
-            $('.dentsoft-step[data-step="1"]').addClass('active');
+            this.goToStep(this.currentStep >= 2 ? this.currentStep : 2);
         },
 
         queryAppointment() {
