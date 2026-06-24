@@ -300,7 +300,7 @@ class DentSoft_Ajax_Handlers {
             wp_mail($row['patient_email'], 'Randevunuz İptal Edildi - ' . $clinic_name, $phtml, $headers);
         }
 
-        $staff_email = 'serkesen@gmail.com';
+        $staff_email = array('serkesen@gmail.com', 'info@capaortodonti.com');
 
         $srows  = $this->dentsoft_email_row('Ad Soyad', esc_html($row ? trim($row['patient_name'] . ' ' . $row['patient_surname']) : '-'));
         $srows .= $this->dentsoft_email_row('Telefon', esc_html(($row && !empty($row['patient_phone'])) ? $row['patient_phone'] : '-'));
@@ -347,7 +347,7 @@ class DentSoft_Ajax_Handlers {
             wp_mail($data['patient_email'], 'Randevunuz Oluşturuldu - ' . $clinic_name, $html, $headers);
         }
 
-        $staff_email = 'serkesen@gmail.com';
+        $staff_email = array('serkesen@gmail.com', 'info@capaortodonti.com');
 
         $srows  = $this->dentsoft_email_row('Ad Soyad', esc_html($data['patient_name'] . ' ' . $data['patient_surname']));
         $srows .= $this->dentsoft_email_row('Telefon', esc_html($data['patient_phone']));
