@@ -281,8 +281,24 @@ class DentSoft_Ajax_Handlers {
         }
 
         $headers = array('Content-Type: text/html; charset=UTF-8');
+        $clinic_name = (!empty($row['clinic_name'])) ? $row['clinic_name'] : 'Çapa Ortodonti';
         $appt_date = (!empty($row['appointment_date'])) ? date('d.m.Y H:i', strtotime($row['appointment_date'])) : '-';
         $doctor = (!empty($row['doctor_name'])) ? $row['doctor_name'] : '-';
+
+        if ($row && !empty($row['patient_email'])) {
+            $prows  = $this->dentsoft_email_row('Klinik', esc_html($clinic_name));
+            $prows .= $this->dentsoft_email_row('Hekim', esc_html($doctor));
+            $prows .= $this->dentsoft_email_row('Tarih & Saat', esc_html($appt_date));
+            $prows .= $this->dentsoft_email_row('PNR No', esc_html($pnr));
+
+            $pinner  = '<p style="margin:0 0 14px;">Sayın <strong>' . esc_html(trim($row['patient_name'] . ' ' . $row['patient_surname'])) . '</strong>,</p>';
+            $pinner .= '<p style="margin:0 0 18px;">Aşağıdaki randevunuz iptal edilmiştir:</p>';
+            $pinner .= '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;margin:0 0 8px;">' . $prows . '</table>';
+            $pinner .= '<p style="margin:18px 0 0;color:#666666;font-size:13px;line-height:1.6;">Yeni randevu için web sitemizden tekrar randevu alabilirsiniz.</p>';
+
+            $phtml = $this->dentsoft_email_shell('Randevunuz İptal Edildi', $pinner);
+            wp_mail($row['patient_email'], 'Randevunuz İptal Edildi - ' . $clinic_name, $phtml, $headers);
+        }
 
         $staff_email = 'serkesen@gmail.com';
 
