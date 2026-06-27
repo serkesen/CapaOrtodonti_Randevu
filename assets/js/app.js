@@ -358,10 +358,15 @@
                 const endHour = (dow === 6) ? 18 : 19; // cmt 18:00, diger 19:00
                 const key = d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate());
                 const arr = [];
+                // Bugun icin: su an + 2 saat tamponundan onceki dilimler secilemez (disabled)
+                const now = new Date();
+                const isToday = (d.getFullYear() === now.getFullYear() && d.getMonth() === now.getMonth() && d.getDate() === now.getDate());
+                const minMin = isToday ? (now.getHours() * 60 + now.getMinutes() + 120) : -1;
                 for (let m = 9 * 60 + 30; m + 30 <= endHour * 60; m += 30) {
                     const bH = Math.floor(m / 60), bM = m % 60;
                     const eH = Math.floor((m + 30) / 60), eM = (m + 30) % 60;
-                    arr.push({ Type: 'Available', Time: { Begin: pad(bH) + ':' + pad(bM), End: pad(eH) + ':' + pad(eM) } });
+                    const passed = (m < minMin); // gecmis/tampon ici -> disabled
+                    arr.push({ Type: passed ? 'NotAvailable' : 'Available', Time: { Begin: pad(bH) + ':' + pad(bM), End: pad(eH) + ':' + pad(eM) } });
                 }
                 slots[key] = arr;
             }
