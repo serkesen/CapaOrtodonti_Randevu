@@ -397,6 +397,7 @@
         },
 
         renderPages($track, dates) {
+            dates = dates.filter(dd => new Date(dd).getDay() !== 0); // pazar - klinik kapali, hic gosterme
             for (let i = 0; i < dates.length; i += 4) {
                 const $page = $('<div>').addClass('dentsoft-cal-page');
                 dates.slice(i, i + 4).forEach(date => $page.append(this.buildDayColumn(date)));
