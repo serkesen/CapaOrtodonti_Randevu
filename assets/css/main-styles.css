@@ -987,7 +987,7 @@
     min-width: 400px !important;
 }
 .dentsoft-doctor-dropdown .select2-results__options {
-    max-height: min(320px, 45vh) !important;
+    max-height: min(360px, 60vh) !important;
     padding: 12px !important;
 }
 .dentsoft-doctor-dropdown .select2-results__option {
