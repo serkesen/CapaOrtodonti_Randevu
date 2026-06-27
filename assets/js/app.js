@@ -612,8 +612,56 @@
             }
         },
 
+        submitGenelRandevu() {
+            // Genel Randevu (Muayene): DentSoft API'ye GITMEZ, sadece WP'ye gidip mail tetikler. DB'ye yazilmaz.
+            this.showLoading();
+            const data = {
+                action: 'dentsoft_genel_randevu',
+                nonce: this.config.nonce,
+                patient_number: $('#dentsoft-patient-number').val(),
+                patient_name: $('#dentsoft-patient-name').val(),
+                patient_surname: $('#dentsoft-patient-surname').val(),
+                patient_phone: $('#dentsoft-patient-phone').val(),
+                patient_birthday: $('#dentsoft-patient-birthday').val(),
+                patient_email: $('#dentsoft-patient-email').val(),
+                clinic_name: (this.selectedData.clinic && this.selectedData.clinic.Name) || '',
+                appointment_date: (this.selectedData.date || '') + ' ' + (this.selectedData.time || '')
+            };
+            $.ajax({
+                url: this.config.ajaxUrl,
+                method: 'POST',
+                data: data,
+                success: (response) => {
+                    this.hideLoading();
+                    if (response.success) {
+                        this.showGenelSuccess();
+                    } else {
+                        this.showError((response.data && response.data.message) || 'Talep gonderilemedi.');
+                    }
+                },
+                error: () => {
+                    this.hideLoading();
+                    this.showError('Talep gonderilirken hata olustu.');
+                }
+            });
+        },
+
+        showGenelSuccess() {
+            // Step 5 (basari ekrani) Genel Randevu'ya gore: PNR/Print yok, talep mesaji
+            $('#dentsoft-summary-patient').text($('#dentsoft-patient-name').val() + ' ' + $('#dentsoft-patient-surname').val());
+            $('#dentsoft-summary-clinic').text((this.selectedData.clinic && this.selectedData.clinic.Name) || '');
+            $('#dentsoft-summary-doctor').text('Genel Randevu (Muayene)');
+            $('#dentsoft-summary-datetime').text((this.selectedData.date || '') + ' ' + (this.selectedData.time || ''));
+            $('#dentsoft-summary-pnr').text('Talebiniz alındı');
+            this.goToStep(5);
+        },
+
         submitAppointment() {
             if (!this.validateForm()) return;
+            if (this.selectedData.doctor && this.selectedData.doctor.User.ID === 'GENEL_MUAYENE') {
+                this.submitGenelRandevu();
+                return;
+            }
             // KVKK onayi checkbox ile alindi (validateForm kontrol etti).
             // SMS onay kodu akisi kaldirildi; dogrudan randevu olusturuluyor.
             this.createAppointment();
@@ -978,6 +1026,17 @@
         nextStep() {
             if (this.currentStep === 2 && this.selectedData.doctor) {
                 this.loadAppointmentSlots();
+            }
+
+            // Genel Randevu: saat secimi -> hasta bilgileri gecisinde uyari modali
+            if (this.currentStep === 3 && this.selectedData.doctor && this.selectedData.doctor.User.ID === 'GENEL_MUAYENE') {
+                Swal.fire({
+                    icon: 'info',
+                    title: 'Bilgilendirme',
+                    text: 'Seçtiğiniz gün ve saat, hekimlerimizin uygunluk durumuna göre değişiklik gösterebilir, sizi arayacağız.',
+                    confirmButtonText: 'Tamam'
+                }).then(() => { this.goToStep(4); });
+                return;
             }
 
             if (this.currentStep < 5) {
