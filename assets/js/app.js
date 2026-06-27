@@ -503,6 +503,7 @@
         },
 
         loadMoreSlots() {
+            if (this.selectedData.doctor && this.selectedData.doctor.User.ID === 'GENEL_MUAYENE') return; // Genel'de sonsuz yukleme yok (14 gun sabit)
             if (this.loadingMore || this.noMoreSlots || !this.currentSlots) return;
 
             const dates = Object.keys(this.currentSlots).sort();
