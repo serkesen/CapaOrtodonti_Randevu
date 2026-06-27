@@ -293,6 +293,14 @@
             const $select = $('#dentsoft-doctor-select');
             const doctorId = $select.val();
 
+            if (doctorId === 'GENEL_MUAYENE') {
+                // Genel Randevu (Muayene): sahte hekim nesnesi, DentSoft'a gitmez
+                this.selectedData.doctor = { User: { ID: 'GENEL_MUAYENE', FirstName: 'Genel Randevu', LastName: '(Muayene)', Roles: 'Muayene' } };
+                $('.dentsoft-btn-next[data-step="2"]').prop('disabled', false);
+                this.updateSelectionSummary();
+                return;
+            }
+
             if (doctorId) {
                 const doctorData = $select.find('option:selected').data('doctor');
                 if (doctorData) {
@@ -335,7 +343,39 @@
             }
         },
 
+        loadGenelSlots() {
+            // Genel Randevu sahte takvimi: 14 gun, Cmt 09:30-18:00, diger 09:30-19:00, 30dk, hepsi Available.
+            // Pazar ve 12:30 renderPages/buildDayColumn filtrelerinde elenir.
+            $('#dentsoft-calendar-loading').hide();
+            const pad = n => (n < 10 ? '0' + n : '' + n);
+            const slots = {};
+            const start = new Date(this.currentDate);
+            for (let i = 0; i < 14; i++) {
+                const d = new Date(start);
+                d.setDate(d.getDate() + i);
+                const dow = d.getDay();
+                if (dow === 0) continue; // pazar kapali
+                const endHour = (dow === 6) ? 18 : 19; // cmt 18:00, diger 19:00
+                const key = d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate());
+                const arr = [];
+                for (let m = 9 * 60 + 30; m + 30 <= endHour * 60; m += 30) {
+                    const bH = Math.floor(m / 60), bM = m % 60;
+                    const eH = Math.floor((m + 30) / 60), eM = (m + 30) % 60;
+                    arr.push({ Type: 'Available', Time: { Begin: pad(bH) + ':' + pad(bM), End: pad(eH) + ':' + pad(eM) } });
+                }
+                slots[key] = arr;
+            }
+            this.renderCalendar(slots);
+            $('#dentsoft-calendar-controls').hide();
+            $('#dentsoft-calendar-container').show();
+            $('#dentsoft-no-appointments').hide();
+        },
+
         loadAppointmentSlots() {
+            if (this.selectedData.doctor && this.selectedData.doctor.User.ID === 'GENEL_MUAYENE') {
+                this.loadGenelSlots();
+                return;
+            }
             const clinicId = this.selectedData.clinic.ID;
             const doctorId = this.selectedData.doctor.User.ID;
             const dateStr = this.formatDate(this.currentDate);
