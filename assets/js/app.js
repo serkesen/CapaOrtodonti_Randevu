@@ -233,6 +233,14 @@
                     $select.append($option);
                 });
 
+                // Genel Randevu (Muayene) - sahte hekim, en altta. DentSoft'a gitmez, mail tetikler.
+                const $genel = $('<option>')
+                    .val('GENEL_MUAYENE')
+                    .text('Genel Randevu (Muayene)')
+                    .data('role', 'Muayene')
+                    .data('nearest', '');
+                $select.append($genel);
+
                 $select.select2({
                     placeholder: 'Hekim Seçiniz...',
                     minimumResultsForSearch: Infinity,
