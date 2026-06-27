@@ -15,6 +15,8 @@ class DentSoft_Ajax_Handlers {
         
         add_action('wp_ajax_dentsoft_delete_appointment', array($this, 'delete_appointment'));
 
+        add_action('wp_ajax_dentsoft_genel_randevu', array($this, 'genel_randevu_notify'));
+        add_action('wp_ajax_nopriv_dentsoft_genel_randevu', array($this, 'genel_randevu_notify'));
         add_action('wp_ajax_dentsoft_cancel_appointment', array($this, 'cancel_appointment_notify'));
         add_action('wp_ajax_nopriv_dentsoft_cancel_appointment', array($this, 'cancel_appointment_notify'));
     }
@@ -316,6 +318,82 @@ class DentSoft_Ajax_Handlers {
 
         $html = $this->dentsoft_email_shell('Randevu İptali', $sinner);
         wp_mail($staff_email, 'Randevu İptali - ' . $pnr, $html, $headers);
+    }
+
+
+    public function genel_randevu_notify() {
+        $this->verify_nonce();
+
+        $required_fields = array('patient_number', 'patient_name', 'patient_surname', 'patient_phone');
+        foreach ($required_fields as $field) {
+            if (empty($_POST[$field])) {
+                wp_send_json_error(array(
+                    'message' => ucfirst(str_replace('_', ' ', $field)) . ' alanı zorunludur.',
+                    'field' => $field
+                ));
+                return;
+            }
+        }
+
+        $data = array(
+            'patient_number'  => sanitize_text_field(wp_unslash($_POST['patient_number'])),
+            'patient_name'    => sanitize_text_field(wp_unslash($_POST['patient_name'])),
+            'patient_surname' => sanitize_text_field(wp_unslash($_POST['patient_surname'])),
+            'patient_phone'   => sanitize_text_field(wp_unslash($_POST['patient_phone'])),
+            'patient_email'   => !empty($_POST['patient_email']) ? sanitize_email(wp_unslash($_POST['patient_email'])) : '',
+            'patient_birthday'=> !empty($_POST['patient_birthday']) ? sanitize_text_field(wp_unslash($_POST['patient_birthday'])) : '',
+            'clinic_name'     => !empty($_POST['clinic_name']) ? sanitize_text_field(wp_unslash($_POST['clinic_name'])) : 'Çapa Ortodonti',
+            'appointment_date'=> !empty($_POST['appointment_date']) ? sanitize_text_field(wp_unslash($_POST['appointment_date'])) : '',
+        );
+
+        $this->send_genel_randevu_notifications($data);
+
+        wp_send_json_success(array(
+            'message' => 'Talebiniz alındı.'
+        ));
+    }
+
+    private function send_genel_randevu_notifications($data) {
+        $settings = get_option('dentsoft_settings', array());
+        if (empty($settings['enable_email_notifications'])) {
+            return;
+        }
+
+        $headers = array('Content-Type: text/html; charset=UTF-8');
+        $clinic_name = !empty($data['clinic_name']) ? $data['clinic_name'] : 'Çapa Ortodonti';
+        $full_name = trim($data['patient_name'] . ' ' . $data['patient_surname']);
+        $tercih = !empty($data['appointment_date']) ? trim($data['appointment_date']) : '-';
+
+        if (!empty($data['patient_email'])) {
+            $prows  = $this->dentsoft_email_row('Klinik', esc_html($clinic_name));
+            $prows .= $this->dentsoft_email_row('Talep Türü', esc_html('Genel Randevu (Muayene)'));
+            $prows .= $this->dentsoft_email_row('Tercih Edilen Tarih & Saat', esc_html($tercih));
+
+            $pinner  = '<p style="margin:0 0 14px;">Sayın <strong>' . esc_html($full_name) . '</strong>,</p>';
+            $pinner .= '<p style="margin:0 0 18px;">Genel randevu (muayene) talebiniz tarafımıza ulaşmıştır. Tercih ettiğiniz tarih ve saat, hekimlerimizin uygunluk durumuna göre değişiklik gösterebilir; en kısa sürede sizinle iletişime geçeceğiz.</p>';
+            $pinner .= '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;margin:0 0 8px;">' . $prows . '</table>';
+            $pinner .= '<p style="margin:18px 0 0;color:#666666;font-size:13px;line-height:1.6;">' . esc_html($clinic_name) . '</p>';
+
+            $phtml = $this->dentsoft_email_shell('Talebiniz Alındı', $pinner);
+            wp_mail($data['patient_email'], 'Genel Randevu Talebiniz Alındı - ' . $clinic_name, $phtml, $headers);
+        }
+
+        $staff_email = array('serkesen@gmail.com', 'info@capaortodonti.com');
+
+        $srows  = $this->dentsoft_email_row('Ad Soyad', esc_html($full_name));
+        $srows .= $this->dentsoft_email_row('Telefon', esc_html($data['patient_phone']));
+        $srows .= $this->dentsoft_email_row('E-posta', esc_html(!empty($data['patient_email']) ? $data['patient_email'] : '-'));
+        $srows .= $this->dentsoft_email_row('TC Kimlik No', esc_html($data['patient_number']));
+        if (!empty($data['patient_birthday'])) {
+            $srows .= $this->dentsoft_email_row('Doğum Tarihi', esc_html($data['patient_birthday']));
+        }
+        $srows .= $this->dentsoft_email_row('Tercih Edilen Tarih & Saat', esc_html($tercih));
+
+        $sinner  = '<p style="margin:0 0 18px;">Yeni bir <strong>Genel Randevu (Muayene)</strong> talebi geldi. Bu talep DentSoft sistemine kaydedilmemiştir; lütfen hastayı arayıp uygun saati teyit edin.</p>';
+        $sinner .= '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;margin:0 0 8px;">' . $srows . '</table>';
+
+        $shtml = $this->dentsoft_email_shell('Genel Randevu Talebi', $sinner);
+        wp_mail($staff_email, 'Genel Randevu Talebi - ' . $full_name, $shtml, $headers);
     }
 
     private function send_email_notifications($data, $patient_link = '', $staff_link = '') {
