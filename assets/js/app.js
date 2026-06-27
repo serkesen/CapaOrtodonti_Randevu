@@ -436,6 +436,7 @@
 
             const $list = $('<div>').addClass('dentsoft-time-list');
             (this.currentSlots[date] || []).forEach(slot => {
+                    if (slot.Time && slot.Time.Begin === '12:30') return; // 12:30 yemek molasi - hic gosterme
                 const isAvailable = slot.Type === 'Available';
                 const $btn = $('<button>')
                     .addClass('dentsoft-time-slot')
