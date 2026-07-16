@@ -154,7 +154,7 @@
                     this.updateSelectionSummary();
                     this.loadDoctors(clinicData.ID);
                     // Tek klinik: klinik adimi atlanir, dogrudan hekim adimina gec
-                    if (this.currentStep === 1) { this.goToStep(2); }
+                    if (this.currentStep === 1) { this.goToStep(2, false); }
                 }
             } else {
                 this.selectedData.clinic = null;
@@ -1065,7 +1065,7 @@
             }
         },
 
-        goToStep(step) {
+        goToStep(step, scroll = true) {
             $('.dentsoft-step').removeClass('active completed');
             $('.dentsoft-step-content').removeClass('active');
 
@@ -1078,9 +1078,11 @@
 
             this.currentStep = step;
 
-            $('html, body').animate({
-                scrollTop: $('.dentsoft-appointment-wrapper').offset().top - 50
-            }, 500);
+            if (scroll) {
+                $('html, body').animate({
+                    scrollTop: $('.dentsoft-appointment-wrapper').offset().top - 50
+                }, 500);
+            }
         },
 
         resetForm() {
