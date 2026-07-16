@@ -1310,3 +1310,10 @@ html:has(body.page-id-8830) { scroll-behavior: auto !important; }
     margin-right: 12px; flex: 0 0 44px;
     background: #eef3f8; border: 1px solid #e7eef7;
 }
+
+
+/* Hekim dropdown: 6 satir gorunur acilsin (scroll gerekmesin) */
+.dentsoft-doctor-dropdown .select2-results__options { max-height: 400px !important; }
+@media (max-width: 768px) {
+    .dentsoft-doctor-dropdown .select2-results__options { max-height: 360px !important; }
+}
