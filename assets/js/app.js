@@ -245,6 +245,7 @@
                     .val('GENEL_MUAYENE')
                     .text('Genel Randevu')
                     .data('role', 'Tüm Tedaviler')
+                    .data('avatar', "data:image/svg+xml;base64,PHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHdpZHRoPSc5NicgaGVpZ2h0PSc5Nicgdmlld0JveD0nMCAwIDI0IDI0Jz48ZGVmcz48bGluZWFyR3JhZGllbnQgaWQ9J2cnIHgxPScwJyB5MT0nMCcgeDI9JzEnIHkyPScxJz48c3RvcCBvZmZzZXQ9JzAnIHN0b3AtY29sb3I9JyMxNGE5OWEnLz48c3RvcCBvZmZzZXQ9Jy41NScgc3RvcC1jb2xvcj0nIzBlODU3YicvPjxzdG9wIG9mZnNldD0nMScgc3RvcC1jb2xvcj0nIzBiNjI1YycvPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPjxyZWN0IHdpZHRoPScyNCcgaGVpZ2h0PScyNCcgZmlsbD0ndXJsKCNnKScvPjxjaXJjbGUgY3g9JzEyJyBjeT0nOC42JyByPSczLjQnIGZpbGw9JyNmZmYnLz48cGF0aCBkPSdNMTIgMTMuMmMtNC4yIDAtNi45IDIuOS02LjkgNi44aDEzLjhjMC0zLjktMi43LTYuOC02LjktNi44eicgZmlsbD0nI2ZmZicvPjwvc3ZnPg==")
                     .data('nearest', '');
                 $select.append($genel);
 
