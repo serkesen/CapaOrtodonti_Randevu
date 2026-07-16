@@ -1313,7 +1313,7 @@ html:has(body.page-id-8830) { scroll-behavior: auto !important; }
 
 
 /* Hekim dropdown: 6 satir gorunur acilsin (scroll gerekmesin) */
-.dentsoft-doctor-dropdown .select2-results__options { max-height: 400px !important; }
+.dentsoft-doctor-dropdown .select2-results__options { max-height: min(540px, 75vh) !important; }
 @media (max-width: 768px) {
-    .dentsoft-doctor-dropdown .select2-results__options { max-height: 360px !important; }
+    .dentsoft-doctor-dropdown .select2-results__options { max-height: min(540px, 75vh) !important; }
 }
