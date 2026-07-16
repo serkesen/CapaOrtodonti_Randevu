@@ -662,6 +662,14 @@
         },
 
         showGenelSuccess() {
+            try {
+                window.dataLayer = window.dataLayer || [];
+                window.dataLayer.push({
+                    event: 'randevu_tamamlandi',
+                    randevu_tipi: 'genel',
+                    hekim: 'Genel Randevu'
+                });
+            } catch (e) {}
             // Step 5 (basari ekrani) Genel Randevu'ya gore: PNR/Print yok, talep mesaji
             $('#dentsoft-summary-patient').text($('#dentsoft-patient-name').val() + ' ' + $('#dentsoft-patient-surname').val());
             $('#dentsoft-summary-clinic').text((this.selectedData.clinic && this.selectedData.clinic.Name) || '');
@@ -919,6 +927,14 @@
         },
 
         showSuccess(appointmentData) {
+            try {
+                window.dataLayer = window.dataLayer || [];
+                window.dataLayer.push({
+                    event: 'randevu_tamamlandi',
+                    randevu_tipi: 'dentsoft',
+                    hekim: (appointmentData.User && appointmentData.User.Name) || ''
+                });
+            } catch (e) {}
             $('#dentsoft-summary-patient').text(`${$('#dentsoft-patient-name').val()} ${$('#dentsoft-patient-surname').val()}`);
             $('#dentsoft-summary-clinic').text(appointmentData.Clinic.Name);
             $('#dentsoft-summary-doctor').text(appointmentData.User.Name);

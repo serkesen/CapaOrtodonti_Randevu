@@ -213,7 +213,7 @@ final class DentSoft_Plugin {
         wp_enqueue_style('dentsoft-fontawesome', DENTSOFT_PLUGIN_URL . 'assets/fontawesome/css/all.min.css', array(), DENTSOFT_VERSION);
         wp_enqueue_style('dentsoft-select2', DENTSOFT_PLUGIN_URL . 'assets/vendor/select2/select2.min.css', array(), DENTSOFT_VERSION);
         wp_enqueue_style('dentsoft-sweetalert2', DENTSOFT_PLUGIN_URL . 'assets/plugins/sweet-alert2/sweetalert2.min.css', array(), DENTSOFT_VERSION);
-        wp_enqueue_style('dentsoft-main-styles', DENTSOFT_PLUGIN_URL . 'assets/css/main-styles.css', array(), DENTSOFT_VERSION);
+        wp_enqueue_style('dentsoft-main-styles', DENTSOFT_PLUGIN_URL . 'assets/css/main-styles.css', array(), @filemtime(DENTSOFT_PLUGIN_DIR . 'assets/css/main-styles.css') ?: DENTSOFT_VERSION);
         
         $settings = get_option('dentsoft_settings', array());
         $primary_color = isset($settings['primary_color']) ? $settings['primary_color'] : '#00cc61';
@@ -241,7 +241,7 @@ final class DentSoft_Plugin {
         wp_enqueue_script('dentsoft-select2', DENTSOFT_PLUGIN_URL . 'assets/vendor/select2/select2.full.min.js', array('jquery'), DENTSOFT_VERSION, true);
         wp_enqueue_script('dentsoft-select2-tr', DENTSOFT_PLUGIN_URL . 'assets/vendor/select2/i18n/tr.js', array('dentsoft-select2'), DENTSOFT_VERSION, true);
         wp_enqueue_script('dentsoft-sweetalert2', DENTSOFT_PLUGIN_URL . 'assets/plugins/sweet-alert2/sweetalert2.min.js', array(), DENTSOFT_VERSION, true);
-        wp_enqueue_script('dentsoft-app', DENTSOFT_PLUGIN_URL . 'assets/js/app.js', array('jquery', 'dentsoft-blockui', 'dentsoft-select2', 'dentsoft-select2-tr', 'dentsoft-sweetalert2'), DENTSOFT_VERSION, true);
+        wp_enqueue_script('dentsoft-app', DENTSOFT_PLUGIN_URL . 'assets/js/app.js', array('jquery', 'dentsoft-blockui', 'dentsoft-select2', 'dentsoft-select2-tr', 'dentsoft-sweetalert2'), @filemtime(DENTSOFT_PLUGIN_DIR . 'assets/js/app.js') ?: DENTSOFT_VERSION, true);
         
         wp_localize_script('dentsoft-app', 'dentsoftConfig', array(
             'ajaxUrl' => admin_url('admin-ajax.php'),
