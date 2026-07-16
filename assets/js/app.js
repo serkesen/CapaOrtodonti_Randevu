@@ -200,6 +200,13 @@
 
             if (doctors && doctors.length > 0) {
                 // Manuel hekim siralamasi (User.ID'ye gore). Listede olmayanlar sona, API sirasiyla.
+                const doctorPhotos = {
+                    'N0NyaEswbDR0dEQwL1h4Z2xKTzVydz09': 'https://capaortodonti.com/wp-content/uploads/semraerrkesen.png',
+                    'b3dqbU9oM3VFUGg3SFZ1eG9IMjlLUT09': 'https://capaortodonti.com/wp-content/uploads/Ozgur-YILDIZ.png',
+                    'L1lMdldJTjBmb3ZxOWNBNm5wNHlydz09': 'https://capaortodonti.com/wp-content/uploads/Adsiz-tasarim-2.png',
+                    'eXFoNHN4eHVPeVBvSXRaNWpmRDkvZz09': 'https://capaortodonti.com/wp-content/uploads/Muhammet-Furkan-OZDEN.png',
+                    'ZmFPYkFTemhjQWFXWnJmeTJwMm5lZz09': 'https://capaortodonti.com/wp-content/uploads/Adsiz-tasarim-3.png',
+                };
                 const doctorOrder = [
                     'N0NyaEswbDR0dEQwL1h4Z2xKTzVydz09', // Semra Can Erkesen
                     'b3dqbU9oM3VFUGg3SFZ1eG9IMjlLUT09', // Özgür Yıldız
@@ -226,7 +233,7 @@
                         .val(doctor.User.ID)
                         .text(fullName)
                         .data('doctor', doctor)
-                        .data('avatar', doctor.User.Avatar || `${this.config.pluginUrl}assets/img/default-avatar.png`)
+                        .data('avatar', doctorPhotos[doctor.User.ID] || doctor.User.Avatar || `${this.config.pluginUrl}assets/img/default-avatar.png`)
                         .data('role', doctor.User.Roles || 'Diş Hekimi')
                         .data('nearest', nearestDay);
 
@@ -262,9 +269,11 @@
             const $option = $(item.element);
             const role = $option.data('role');
             const nearest = $option.data('nearest');
+            const avatar = $option.data('avatar');
 
             return `
                 <div class="dentsoft-doctor-item">
+                    <img class="dentsoft-doctor-avatar" src="${avatar}" alt="" loading="lazy">
                     <div class="dentsoft-doctor-info">
                         <div class="dentsoft-doctor-name">${item.text}${role ? ' - ' + role : ''}</div>
                         <div class="dentsoft-doctor-nearest">${nearest}</div>

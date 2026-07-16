@@ -1300,3 +1300,13 @@ html:has(body.page-id-8830) { scroll-behavior: auto !important; }
         transform: none !important;
     }
 }
+
+
+/* Hekim dropdown: isim solunda kucuk hekim fotografi */
+.dentsoft-doctor-item { display: flex !important; align-items: center !important; }
+.dentsoft-doctor-avatar {
+    width: 44px; height: 44px; border-radius: 50%;
+    object-fit: cover; object-position: center top;
+    margin-right: 12px; flex: 0 0 44px;
+    background: #eef3f8; border: 1px solid #e7eef7;
+}
