@@ -243,8 +243,8 @@
                 // Genel Randevu (Muayene) - sahte hekim, en altta. DentSoft'a gitmez, mail tetikler.
                 const $genel = $('<option>')
                     .val('GENEL_MUAYENE')
-                    .text('Genel Randevu (Muayene)')
-                    .data('role', 'Muayene')
+                    .text('Genel Randevu')
+                    .data('role', 'Tüm Tedaviler')
                     .data('nearest', '');
                 $select.append($genel);
 
@@ -304,7 +304,7 @@
 
             if (doctorId === 'GENEL_MUAYENE') {
                 // Genel Randevu (Muayene): sahte hekim nesnesi, DentSoft'a gitmez
-                this.selectedData.doctor = { User: { ID: 'GENEL_MUAYENE', FirstName: 'Genel Randevu', LastName: '(Muayene)', Roles: 'Muayene' } };
+                this.selectedData.doctor = { User: { ID: 'GENEL_MUAYENE', FirstName: 'Genel Randevu', LastName: '', Roles: 'Tüm Tedaviler' } };
                 $('.dentsoft-btn-next[data-step="2"]').prop('disabled', false);
                 this.updateSelectionSummary();
                 return;
@@ -664,7 +664,7 @@
             // Step 5 (basari ekrani) Genel Randevu'ya gore: PNR/Print yok, talep mesaji
             $('#dentsoft-summary-patient').text($('#dentsoft-patient-name').val() + ' ' + $('#dentsoft-patient-surname').val());
             $('#dentsoft-summary-clinic').text((this.selectedData.clinic && this.selectedData.clinic.Name) || '');
-            $('#dentsoft-summary-doctor').text('Genel Randevu (Muayene)');
+            $('#dentsoft-summary-doctor').text('Genel Randevu - Tüm Tedaviler');
             $('#dentsoft-summary-datetime').text((this.selectedData.date || '') + ' ' + (this.selectedData.time || ''));
             $('#dentsoft-summary-pnr').text('Talebiniz alındı');
             this.goToStep(5);
