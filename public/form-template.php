@@ -6,6 +6,7 @@ if (!defined('ABSPATH')) {
 $settings = get_option('dentsoft_settings', array());
 $primary_color = isset($settings['primary_color']) ? $settings['primary_color'] : '#00cc61';
 
+if (!function_exists('adjustBrightness')) {
 function adjustBrightness($hex, $percent) {
     $hex = str_replace('#', '', $hex);
     $r = hexdec(substr($hex, 0, 2));
@@ -18,13 +19,16 @@ function adjustBrightness($hex, $percent) {
     
     return sprintf('#%02x%02x%02x', $r, $g, $b);
 }
+}
 
+if (!function_exists('hexToRgba')) {
 function hexToRgba($hex, $alpha = 1) {
     $hex = str_replace('#', '', $hex);
     $r = hexdec(substr($hex, 0, 2));
     $g = hexdec(substr($hex, 2, 2));
     $b = hexdec(substr($hex, 4, 2));
     return "rgba($r, $g, $b, $alpha)";
+}
 }
 
 $primary_dark = adjustBrightness($primary_color, -20);
