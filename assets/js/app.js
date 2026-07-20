@@ -1092,6 +1092,8 @@
             $(`.dentsoft-step[data-step="${step}"]`).addClass('active');
             $(`.dentsoft-step-content[data-step="${step}"]`).addClass('active');
 
+            try { if (step > this.currentStep && step < 5) { window.dataLayer = window.dataLayer || []; window.dataLayer.push({ event: 'randevu_adim', adim: step }); } } catch (e) {}
+
             this.currentStep = step;
 
             if (scroll) {
