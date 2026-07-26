@@ -246,6 +246,10 @@ final class DentSoft_Plugin {
         wp_localize_script('dentsoft-app', 'dentsoftConfig', array(
             'ajaxUrl' => admin_url('admin-ajax.php'),
             'nonce' => wp_create_nonce('dentsoft-nonce'),
+            // capa-randevu-sayac: anonim sayac ucu (hasta verisi TASIMAZ).
+            // Uc, CapaOrtodonti_Site/site-customizations.php icinde tanimli.
+            'sayUrl' => esc_url_raw(rest_url('capa/v1/randevu-say')),
+            'sayNonce' => wp_create_nonce('wp_rest'),
             'vkn' => isset($settings['vkn']) ? $settings['vkn'] : '',
             'apiUrl' => isset($settings['api_url']) ? $settings['api_url'] : 'https://clinic.dentsoft.com.tr/Api/v1',
             'bearerToken' => isset($settings['bearer_token']) ? $settings['bearer_token'] : '',
