@@ -661,6 +661,43 @@
             });
         },
 
+        /* capa-randevu-sayac: anonim sayac pingi.
+           GONDERILEN: randevu tipi, hekim adi (klinik personeli), randevu gununun
+           kac gun sonrasi oldugu. GONDERILMEYEN: ad, soyad, telefon, e-posta,
+           dogum tarihi, PNR, hasta numarasi — hicbiri. Sunucuda randevu basina
+           satir olusmaz, yalnizca (gun,tip,hekim) sayaci artar. */
+        capaSayac(tip, hekim, randevuGunu) {
+            try {
+                const cfg = this.config || {};
+                if (!cfg.sayUrl) return;
+                let fark = null;
+                try {
+                    const ham = String(randevuGunu || '').trim();
+                    let iso = null;
+                    if (/^\d{4}-\d{2}-\d{2}/.test(ham)) {
+                        iso = ham.slice(0, 10);
+                    } else if (/^\d{2}[.\/]\d{2}[.\/]\d{4}/.test(ham)) {
+                        const p = ham.slice(0, 10).split(/[.\/]/);
+                        iso = p[2] + '-' + p[1] + '-' + p[0];
+                    }
+                    if (iso) {
+                        const d = new Date(iso + 'T00:00:00');
+                        const b = new Date(); b.setHours(0, 0, 0, 0);
+                        if (!isNaN(d.getTime())) {
+                            const g = Math.round((d - b) / 86400000);
+                            if (g >= 0 && g <= 730) fark = g;
+                        }
+                    }
+                } catch (e) { fark = null; }
+                fetch(cfg.sayUrl, {
+                    method: 'POST',
+                    keepalive: true,
+                    headers: { 'Content-Type': 'application/json', 'X-WP-Nonce': cfg.sayNonce || '' },
+                    body: JSON.stringify({ tip: tip, hekim: hekim || '', gun_farki: fark })
+                }).catch(function () {});
+            } catch (e) {}
+        },
+
         showGenelSuccess() {
             try {
                 window.dataLayer = window.dataLayer || [];
@@ -670,6 +707,7 @@
                     hekim: 'Genel Randevu'
                 });
             } catch (e) {}
+            this.capaSayac('genel', 'Genel Randevu', (this.selectedData && this.selectedData.date) || '');
             // Step 5 (basari ekrani) Genel Randevu'ya gore: PNR/Print yok, talep mesaji
             $('#dentsoft-summary-patient').text($('#dentsoft-patient-name').val() + ' ' + $('#dentsoft-patient-surname').val());
             $('#dentsoft-summary-clinic').text((this.selectedData.clinic && this.selectedData.clinic.Name) || '');
@@ -935,6 +973,9 @@
                     hekim: (appointmentData.User && appointmentData.User.Name) || ''
                 });
             } catch (e) {}
+            this.capaSayac('dentsoft',
+                (appointmentData.User && appointmentData.User.Name) || '',
+                (appointmentData.Appointment && appointmentData.Appointment.Date) || '');
             $('#dentsoft-summary-patient').text(`${$('#dentsoft-patient-name').val()} ${$('#dentsoft-patient-surname').val()}`);
             $('#dentsoft-summary-clinic').text(appointmentData.Clinic.Name);
             $('#dentsoft-summary-doctor').text(appointmentData.User.Name);
