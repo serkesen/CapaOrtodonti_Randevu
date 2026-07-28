@@ -61,37 +61,18 @@ final class DentSoft_Plugin {
     }
     
     public function activate() {
-        global $wpdb;
-        
-        $charset_collate = $wpdb->get_charset_collate();
-        
-        $sql = "CREATE TABLE IF NOT EXISTS {$wpdb->prefix}dentsoft_appointments (
-            id bigint(20) NOT NULL AUTO_INCREMENT,
-            patient_number varchar(100) DEFAULT NULL,
-            patient_name varchar(100) DEFAULT NULL,
-            patient_surname varchar(100) DEFAULT NULL,
-            patient_phone varchar(50) DEFAULT NULL,
-            patient_birthday date DEFAULT NULL,
-            patient_email varchar(100) DEFAULT NULL,
-            clinic_name varchar(255) DEFAULT NULL,
-            clinic_address text DEFAULT NULL,
-            clinic_phone varchar(50) DEFAULT NULL,
-            doctor_name varchar(100) DEFAULT NULL,
-            pnr_no varchar(50) DEFAULT NULL,
-            appointment_date datetime DEFAULT NULL,
-            appointment_status varchar(20) DEFAULT 'pending',
-            created_at datetime DEFAULT CURRENT_TIMESTAMP,
-            updated_at datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-            PRIMARY KEY (id),
-            KEY pnr_no (pnr_no),
-            KEY patient_number (patient_number),
-            KEY appointment_date (appointment_date),
-            KEY appointment_status (appointment_status)
-        ) $charset_collate;";
-        
-        require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
-        dbDelta($sql);
-        
+        // ⚠ KVKK KARARI (28 Temmuz 2026) - BU BLOK BILINCLI OLARAK BOSTUR.
+        //
+        // Randevu/hasta verisi site veritabaninda SAKLANMAZ. Eskiden burada
+        // wp_dentsoft_appointments tablosu olusturuluyordu (TC kimlik no, ad-soyad,
+        // telefon, e-posta, dogum tarihi kolonlariyla). O tablo olusturma kodu
+        // KALDIRILDI: eklenti ileride WP admin'den yeniden etkinlestirildiginde
+        // kisisel veri deposu kazara geri gelmesin diye.
+        //
+        // Randevu kaydinin tek sahibi DentSoft'tur. Site yalnizca bildirim maili
+        // gonderir - bkz. includes/ajax-handlers.php > save_appointment().
+        // Detay: claude/randevu-akisi-tablo-arizasi.md
+
         $default_settings = array(
             'vkn' => '',
             'api_url' => 'https://clinic.dentsoft.com.tr/Api/v1',
