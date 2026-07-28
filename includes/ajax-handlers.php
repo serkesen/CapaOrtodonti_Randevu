@@ -68,22 +68,21 @@ class DentSoft_Ajax_Handlers {
             'appointment_status' => !empty($_POST['appointment_status']) ? sanitize_text_field(wp_unslash($_POST['appointment_status'])) : 'pending'
         );
         
+        // KVKK: hasta verisi site veritabaninda saklanmiyor; wp_dentsoft_appointments
+        // tablosu bilincli olarak yok. Bu noktaya gelindiyse randevu DentSoft tarafinda
+        // ZATEN olusmustur (Status.Code === 100 kontrolunden gecti). Dolayisiyla yerel
+        // kayit adiminin basarisiz olmasi akisi DURDURMAMALIDIR - aksi halde hasta hata
+        // ekrani gorur, bildirim maili gitmez ve olcum eventleri (GA4 + sayac) atmaz.
+        $prev_suppress = $wpdb->suppress_errors(true);
         $result = $wpdb->insert(
             $wpdb->prefix . 'dentsoft_appointments',
             $data,
             array('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s')
         );
-        
-        if ($result === false) {
-            wp_send_json_error(array(
-                'message' => 'Randevu kaydedilirken bir hata oluştu.',
-                'db_error' => $wpdb->last_error
-            ));
-            return;
-        }
-        
-        $appointment_id = $wpdb->insert_id;
-        
+        $wpdb->suppress_errors($prev_suppress);
+
+        $appointment_id = ($result === false) ? 0 : (int) $wpdb->insert_id;
+
         $patient_link = isset($_POST['appointment_link']) ? esc_url_raw(wp_unslash($_POST['appointment_link'])) : '';
         $staff_link = isset($_POST['appointment_staff_link']) ? esc_url_raw(wp_unslash($_POST['appointment_staff_link'])) : '';
         $this->send_email_notifications($data, $patient_link, $staff_link);
