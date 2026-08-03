@@ -1,11 +1,28 @@
 ---
+# capa-randevu v1.0.0 — deploy beyaz listesi
+# 30 Tem 2026: hedef eski DentSoftOnlineRandevu klasoruydu, canlida calisan
+# eklenti ise capa-randevu. Hedef duzeltildi ve beyaz liste v1.0.0'a gore yazildi.
+# Bu dosya BEYAZ LISTEDIR: burada olmayan hicbir dosya sunucuya gitmez.
 deployment:
   tasks:
-    - export PLUGINDIR=/home/d34fcetzlilchq/public_html/wp-content/plugins/DentSoftOnlineRandevu
+    - export PLUGINDIR=/home/d34fcetzlilchq/public_html/wp-content/plugins/capa-randevu
     - export CLONEDIR=/home/d34fcetzlilchq/git-deploy/CapaOrtodonti_Randevu
+    - /bin/mkdir -p "$PLUGINDIR/admin" "$PLUGINDIR/includes" "$PLUGINDIR/public" "$PLUGINDIR/assets/css" "$PLUGINDIR/assets/js" "$PLUGINDIR/assets/fonts" "$PLUGINDIR/assets/vendor/select2/i18n" "$PLUGINDIR/assets/vendor/sweetalert2"
+    - /usr/bin/rsync -a "$CLONEDIR/capa-randevu.php" "$PLUGINDIR/capa-randevu.php"
+    - /usr/bin/rsync -a "$CLONEDIR/uninstall.php" "$PLUGINDIR/uninstall.php"
+    - /usr/bin/rsync -a "$CLONEDIR/includes/class-ajax.php" "$PLUGINDIR/includes/class-ajax.php"
+    - /usr/bin/rsync -a "$CLONEDIR/includes/class-db.php" "$PLUGINDIR/includes/class-db.php"
+    - /usr/bin/rsync -a "$CLONEDIR/admin/admin-page.php" "$PLUGINDIR/admin/admin-page.php"
+    - /usr/bin/rsync -a "$CLONEDIR/admin/settings-page.php" "$PLUGINDIR/admin/settings-page.php"
     - /usr/bin/rsync -a "$CLONEDIR/public/form-template.php" "$PLUGINDIR/public/form-template.php"
     - /usr/bin/rsync -a "$CLONEDIR/assets/css/main-styles.css" "$PLUGINDIR/assets/css/main-styles.css"
+    - /usr/bin/rsync -a "$CLONEDIR/assets/css/admin.css" "$PLUGINDIR/assets/css/admin.css"
+    - /usr/bin/rsync -a "$CLONEDIR/assets/css/icons.css" "$PLUGINDIR/assets/css/icons.css"
     - /usr/bin/rsync -a "$CLONEDIR/assets/js/app.js" "$PLUGINDIR/assets/js/app.js"
-    - /usr/bin/rsync -a "$CLONEDIR/includes/ajax-handlers.php" "$PLUGINDIR/includes/ajax-handlers.php"
-    - /usr/bin/rsync -a "$CLONEDIR/dentsoft.php" "$PLUGINDIR/dentsoft.php"
-    - /usr/bin/rsync -a "$CLONEDIR/assets/vendor/select2/" "$PLUGINDIR/assets/vendor/select2/"
+    - /usr/bin/rsync -a "$CLONEDIR/assets/fonts/fa-solid-900.woff2" "$PLUGINDIR/assets/fonts/fa-solid-900.woff2"
+    - /usr/bin/rsync -a "$CLONEDIR/assets/vendor/jquery.blockUI.js" "$PLUGINDIR/assets/vendor/jquery.blockUI.js"
+    - /usr/bin/rsync -a "$CLONEDIR/assets/vendor/select2/select2.full.min.js" "$PLUGINDIR/assets/vendor/select2/select2.full.min.js"
+    - /usr/bin/rsync -a "$CLONEDIR/assets/vendor/select2/select2.min.css" "$PLUGINDIR/assets/vendor/select2/select2.min.css"
+    - /usr/bin/rsync -a "$CLONEDIR/assets/vendor/select2/i18n/tr.js" "$PLUGINDIR/assets/vendor/select2/i18n/tr.js"
+    - /usr/bin/rsync -a "$CLONEDIR/assets/vendor/sweetalert2/sweetalert2.min.js" "$PLUGINDIR/assets/vendor/sweetalert2/sweetalert2.min.js"
+    - /usr/bin/rsync -a "$CLONEDIR/assets/vendor/sweetalert2/sweetalert2.min.css" "$PLUGINDIR/assets/vendor/sweetalert2/sweetalert2.min.css"
