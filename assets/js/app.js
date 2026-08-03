@@ -698,7 +698,7 @@
                     // Boylece hattin calistigini canliya almadan dogrularız, dashboard
                     // verisi de kirlenmez (site-customizations.php > sorgu whitelist).
                     body: JSON.stringify({
-                        tip: (cfg.testModu ? 'test' : tip),
+                        tip: ((cfg.testModu === true || cfg.testModu === 1 || cfg.testModu === '1') ? 'test' : tip),
                         hekim: hekim || '',
                         gun_farki: fark
                     })
@@ -722,7 +722,7 @@
                 window.dataLayer = window.dataLayer || [];
                 window.dataLayer.push({
                     event: 'randevu_tamamlandi',
-                    test_modu: (this.config && this.config.testModu) ? 1 : 0,
+                    test_modu: (this.config && (this.config.testModu === true || this.config.testModu === 1 || this.config.testModu === '1')) ? 1 : 0,
                     randevu_tipi: 'genel',
                     hekim: 'Genel Randevu'
                 });
@@ -992,7 +992,7 @@
                 window.dataLayer = window.dataLayer || [];
                 window.dataLayer.push({
                     event: 'randevu_tamamlandi',
-                    test_modu: (this.config && this.config.testModu) ? 1 : 0,
+                    test_modu: (this.config && (this.config.testModu === true || this.config.testModu === 1 || this.config.testModu === '1')) ? 1 : 0,
                     randevu_tipi: 'dentsoft',
                     hekim: (appointmentData.User && appointmentData.User.Name) || ''
                 });
@@ -1158,7 +1158,7 @@
             $(`.caparv-step[data-step="${step}"]`).addClass('active');
             $(`.caparv-step-content[data-step="${step}"]`).addClass('active');
 
-            try { if (step > this.currentStep && step < 5) { window.dataLayer = window.dataLayer || []; window.dataLayer.push({ event: 'randevu_adim', adim: step, test_modu: (this.config && this.config.testModu) ? 1 : 0 }); } } catch (e) {}
+            try { if (step > this.currentStep && step < 5) { window.dataLayer = window.dataLayer || []; window.dataLayer.push({ event: 'randevu_adim', adim: step, test_modu: (this.config && (this.config.testModu === true || this.config.testModu === 1 || this.config.testModu === '1')) ? 1 : 0 }); } } catch (e) {}
 
             this.currentStep = step;
 
