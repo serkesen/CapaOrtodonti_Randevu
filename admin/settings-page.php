@@ -12,87 +12,88 @@ $default_settings = array(
     'success_message' => 'Randevunuz başarıyla oluşturuldu!'
 );
 
-$settings = wp_parse_args(get_option('dentsoft_settings', array()), $default_settings);
+$settings = Caparv_Plugin::settings();
+$settings = wp_parse_args($settings, $default_settings);
 
 if (isset($_GET['settings-updated']) && $_GET['settings-updated'] === 'true') {
-    add_settings_error('dentsoft_messages', 'dentsoft_message', 'Ayarlar başarıyla kaydedildi!', 'success');
+    add_settings_error('caparv_messages', 'caparv_message', 'Ayarlar başarıyla kaydedildi!', 'success');
 }
 ?>
 
-<div class="wrap dentsoft-settings-wrap">
+<div class="wrap caparv-settings-wrap">
     <h1 class="wp-heading-inline">
         <span class="dashicons dashicons-admin-settings"></span>
-        DentSoft Online Randevu Ayarları
+        Çapa Randevu — Ayarlar
     </h1>
     
     <hr class="wp-header-end">
     
-    <?php settings_errors('dentsoft_messages'); ?>
+    <?php settings_errors('caparv_messages'); ?>
     
-    <div class="dentsoft-settings-container">
-        <form method="post" action="options.php" class="dentsoft-settings-form">
+    <div class="caparv-settings-container">
+        <form method="post" action="options.php" class="caparv-settings-form">
             <?php
-            settings_fields('dentsoft_settings');
+            settings_fields('caparv_settings_group');
             ?>
             
-            <div class="dentsoft-settings-sections">
-                <div class="dentsoft-settings-section active" data-section="api">
+            <div class="caparv-settings-sections">
+                <div class="caparv-settings-section active" data-section="api">
                     <div class="section-header">
                         <span class="dashicons dashicons-cloud"></span>
                         <h2>API Ayarları</h2>
                     </div>
                     <div class="section-content">
-                        <div class="dentsoft-field-group">
-                            <label for="dentsoft_vkn" class="dentsoft-label">
+                        <div class="caparv-field-group">
+                            <label for="caparv_vkn" class="caparv-label">
                                 Vergi Kimlik Numarası (VKN)
                                 <span class="required">*</span>
                             </label>
                             <input 
                                 type="text"
-                                id="dentsoft_vkn"
-                                name="dentsoft_settings[vkn]"
+                                id="caparv_vkn"
+                                name="caparv_settings[vkn]"
                                 value="<?php echo esc_attr($settings['vkn']); ?>"
-                                class="dentsoft-input"
+                                class="caparv-input"
                                 placeholder="1234567890"
                                 required>
-                            <p class="dentsoft-help-text">
+                            <p class="caparv-help-text">
                                 <span class="dashicons dashicons-info"></span>
-                                DentSoft API'si için klinik VKN numaranızı girin. Bu alan zorunludur.
+                                Randevu API'si için klinik VKN numaranızı girin. Bu alan zorunludur.
                             </p>
                         </div>
                         
-                        <div class="dentsoft-field-group">
-                            <label for="dentsoft_api_url" class="dentsoft-label">
+                        <div class="caparv-field-group">
+                            <label for="caparv_api_url" class="caparv-label">
                                 API URL
                             </label>
                             <input 
                                 type="url"
                                 readonly
-                                id="dentsoft_api_url"
-                                name="dentsoft_settings[api_url]"
+                                id="caparv_api_url"
+                                name="caparv_settings[api_url]"
                                 value="<?php echo esc_url($settings['api_url']); ?>"
-                                class="dentsoft-input"
+                                class="caparv-input"
                                 placeholder="https://clinic.dentsoft.com.tr/Api/v1">
-                            <p class="dentsoft-help-text">
+                            <p class="caparv-help-text">
                                 <span class="dashicons dashicons-warning"></span>
-                                DentSoft API URL adresi. Varsayılan değeri değiştirmeniz önerilmez.
+                                Randevu API URL adresi. Varsayılan değeri değiştirmeniz önerilmez.
                             </p>
                         </div>
                         
-                        <div class="dentsoft-field-group">
-                            <label for="dentsoft_bearer_token" class="dentsoft-label">
+                        <div class="caparv-field-group">
+                            <label for="caparv_bearer_token" class="caparv-label">
                                 Bearer Token
                                 <span class="required">*</span>
                             </label>
                             <input 
                                 type="text"
-                                id="dentsoft_bearer_token"
-                                name="dentsoft_settings[bearer_token]"
+                                id="caparv_bearer_token"
+                                name="caparv_settings[bearer_token]"
                                 value="<?php echo esc_attr($settings['bearer_token']); ?>"
-                                class="dentsoft-input"
+                                class="caparv-input"
                                 placeholder="Token giriniz"
                                 required>
-                            <p class="dentsoft-help-text">
+                            <p class="caparv-help-text">
                                 <span class="dashicons dashicons-lock"></span>
                                 API istekleri için Bearer Token. Bu alan zorunludur.
                             </p>
@@ -100,24 +101,57 @@ if (isset($_GET['settings-updated']) && $_GET['settings-updated'] === 'true') {
                     </div>
                 </div>
                 
-                <div class="dentsoft-settings-section" data-section="notifications">
+                <div class="caparv-settings-section" data-section="notifications">
                     <div class="section-header">
                         <span class="dashicons dashicons-email"></span>
                         <h2>Bildirim Ayarları</h2>
                     </div>
                     <div class="section-content">
-                        <div class="dentsoft-field-group">
-                            <label class="dentsoft-toggle-label">
+                        <div class="caparv-field-group">
+                            <label class="caparv-label" for="caparv_bildirim_adresleri">Bildirim E-posta Adresleri</label>
+                            <input type="text" class="caparv-input" id="caparv_bildirim_adresleri"
+                                name="caparv_settings[bildirim_adresleri]"
+                                value="<?php echo esc_attr(implode(', ', Caparv_Plugin::bildirim_adresleri())); ?>"
+                                placeholder="ornek@site.com, ikinci@site.com">
+                            <p class="caparv-help-text">
+                                <span class="dashicons dashicons-info"></span>
+                                Randevu bildirimleri bu adreslerin <strong>tümüne</strong> gider.
+                                Birden fazla adresi virgülle ayırın. Geçersiz adresler kaydederken atılır.
+                                <br><strong>Test modu açıkken yalnızca listedeki ilk adrese</strong> gönderilir,
+                                hastalara hiç e-posta gitmez.
+                            </p>
+                        </div>
+
+                        <div class="caparv-field-group">
+                            <label class="caparv-toggle-label">
+                                <input type="checkbox" value="1"
+                                    name="caparv_settings[test_modu]"
+                                    <?php checked(!empty($settings['test_modu'])); ?>
+                                    class="caparv-toggle">
+                                <span class="caparv-toggle-slider"></span>
+                                <span class="caparv-toggle-text">Test Modu</span>
+                            </label>
+                            <p class="caparv-help-text">
+                                <span class="dashicons dashicons-warning"></span>
+                                Açıkken hastalara e-posta gitmez, işlem kayıtları <code>test</code> olarak
+                                işaretlenir, ölçüm olayları <code>test</code> etiketiyle gönderilir.
+                                <strong>Randevular yine gerçek klinik sistemine iletilir</strong> —
+                                test randevularını klinik panelinden elle silin. Canlıya almadan önce kapatın.
+                            </p>
+                        </div>
+
+                    <div class="caparv-field-group">
+                            <label class="caparv-toggle-label">
                                 <input 
                                     type="checkbox"
-                                    name="dentsoft_settings[enable_email_notifications]"
+                                    name="caparv_settings[enable_email_notifications]"
                                     value="1"
                                     <?php checked($settings['enable_email_notifications'], '1'); ?>
-                                    class="dentsoft-toggle">
-                                <span class="dentsoft-toggle-slider"></span>
-                                <span class="dentsoft-toggle-text">E-posta Bildirimlerini Etkinleştir</span>
+                                    class="caparv-toggle">
+                                <span class="caparv-toggle-slider"></span>
+                                <span class="caparv-toggle-text">E-posta Bildirimlerini Etkinleştir</span>
                             </label>
-                            <p class="dentsoft-help-text">
+                            <p class="caparv-help-text">
                                 <span class="dashicons dashicons-info"></span>
                                 Randevu oluşturulduğunda hem hastaya hem de yöneticiye e-posta gönderilir.
                             </p>
@@ -125,47 +159,47 @@ if (isset($_GET['settings-updated']) && $_GET['settings-updated'] === 'true') {
                     </div>
                 </div>
                 
-                <div class="dentsoft-settings-section" data-section="appearance">
+                <div class="caparv-settings-section" data-section="appearance">
                     <div class="section-header">
                         <span class="dashicons dashicons-art"></span>
                         <h2>Görünüm Ayarları</h2>
                     </div>
                     <div class="section-content">
-                        <div class="dentsoft-field-group">
-                            <label for="dentsoft_primary_color" class="dentsoft-label">
+                        <div class="caparv-field-group">
+                            <label for="caparv_primary_color" class="caparv-label">
                                 Ana Renk
                             </label>
-                            <div class="dentsoft-color-picker">
+                            <div class="caparv-color-picker">
                                 <input 
                                     type="color"
-                                    id="dentsoft_primary_color"
-                                    name="dentsoft_settings[primary_color]"
+                                    id="caparv_primary_color"
+                                    name="caparv_settings[primary_color]"
                                     value="<?php echo esc_attr($settings['primary_color']); ?>"
-                                    class="dentsoft-color-input">
+                                    class="caparv-color-input">
                                 <input 
                                     type="text"
                                     value="<?php echo esc_attr($settings['primary_color']); ?>"
-                                    class="dentsoft-color-text"
+                                    class="caparv-color-text"
                                     readonly>
                             </div>
-                            <p class="dentsoft-help-text">
+                            <p class="caparv-help-text">
                                 <span class="dashicons dashicons-info"></span>
                                 Randevu formunda kullanılacak ana renk.
                             </p>
                         </div>
                         
-                        <div class="dentsoft-field-group">
-                            <label for="dentsoft_success_message" class="dentsoft-label">
+                        <div class="caparv-field-group">
+                            <label for="caparv_success_message" class="caparv-label">
                                 Başarı Mesajı
                             </label>
                             <input 
                                 type="text"
-                                id="dentsoft_success_message"
-                                name="dentsoft_settings[success_message]"
+                                id="caparv_success_message"
+                                name="caparv_settings[success_message]"
                                 value="<?php echo esc_attr($settings['success_message']); ?>"
-                                class="dentsoft-input"
+                                class="caparv-input"
                                 placeholder="Randevunuz başarıyla oluşturuldu!">
-                            <p class="dentsoft-help-text">
+                            <p class="caparv-help-text">
                                 <span class="dashicons dashicons-info"></span>
                                 Randevu başarıyla oluşturulduğunda gösterilecek mesaj.
                             </p>
@@ -173,22 +207,76 @@ if (isset($_GET['settings-updated']) && $_GET['settings-updated'] === 'true') {
                     </div>
                 </div>
                 
-                <div class="dentsoft-settings-section" data-section="shortcode">
+                <div class="caparv-settings-section" data-section="mailler">
+                    <div class="section-header">
+                        <span class="dashicons dashicons-email-alt"></span>
+                        <h2>E-posta Şablonları</h2>
+                    </div>
+                    <div class="section-content">
+
+                        <p class="caparv-help-text" style="margin-bottom:18px;">
+                            <span class="dashicons dashicons-info"></span>
+                            Aşağıdaki alanlar şu an gönderilen metinlerle doludur.
+                            <strong>Bir alanı tamamen boşaltırsanız varsayılan metne geri döner.</strong>
+                            Gövdede HTML kullanabilirsiniz.
+                        </p>
+
+                        <div class="caparv-field-group" style="background:#f6f7f7;border-left:3px solid #2271b1;padding:12px 14px;">
+                            <strong>Kullanılabilir yer tutucular</strong>
+                            <p class="caparv-help-text" style="margin-top:6px;">
+                                <code>{detay_tablosu}</code> randevu bilgileri tablosu ·
+                                <code>{buton}</code> varsa bağlantı butonu ·
+                                <code>{klinik}</code> ·
+                                <code>{klinik_adres}</code> ·
+                                <code>{klinik_telefon}</code> ·
+                                <code>{hasta_adi}</code> ·
+                                <code>{hekim}</code> ·
+                                <code>{tarih}</code> ·
+                                <code>{pnr}</code> ·
+                                <code>{telefon}</code> ·
+                                <code>{eposta}</code> ·
+                                <code>{tc}</code> ·
+                                <code>{dogum}</code>
+                                <br>Karşılığı olmayan yer tutucular gönderim sırasında silinir.
+                            </p>
+                        </div>
+
+                        <?php foreach (Caparv_Plugin::varsayilan_sablonlar() as $k => $v) :
+                            $mevcut = Caparv_Plugin::sablon($k); ?>
+                            <div class="caparv-field-group" style="border-top:1px solid #e0e0e0;padding-top:16px;margin-top:16px;">
+                                <label class="caparv-label" style="font-size:14px;"><?php echo esc_html($v['ad']); ?></label>
+
+                                <label class="caparv-label" for="sb-<?php echo esc_attr($k); ?>-konu" style="font-weight:400;">Konu</label>
+                                <input type="text" class="caparv-input" id="sb-<?php echo esc_attr($k); ?>-konu"
+                                    name="caparv_settings[sablonlar][<?php echo esc_attr($k); ?>][konu]"
+                                    value="<?php echo esc_attr($mevcut['konu']); ?>">
+
+                                <label class="caparv-label" for="sb-<?php echo esc_attr($k); ?>-govde" style="font-weight:400;margin-top:8px;">Gövde</label>
+                                <textarea class="caparv-input" id="sb-<?php echo esc_attr($k); ?>-govde" rows="6"
+                                    style="font-family:Menlo,Consolas,monospace;font-size:12px;line-height:1.6;"
+                                    name="caparv_settings[sablonlar][<?php echo esc_attr($k); ?>][govde]"><?php echo esc_textarea($mevcut['govde']); ?></textarea>
+                            </div>
+                        <?php endforeach; ?>
+
+                    </div>
+                </div>
+
+                <div class="caparv-settings-section" data-section="shortcode">
                     <div class="section-header">
                         <span class="dashicons dashicons-editor-code"></span>
                         <h2>Shortcode Kullanımı</h2>
                     </div>
                     <div class="section-content">
-                        <div class="dentsoft-shortcode-box">
+                        <div class="caparv-shortcode-box">
                             <h3>Randevu Formu Shortcode'u</h3>
-                            <div class="dentsoft-shortcode-display">
-                                <code>[dentsoft_appointment_form]</code>
-                                <button type="button" class="dentsoft-copy-btn" onclick="navigator.clipboard.writeText('[dentsoft_appointment_form]')">
+                            <div class="caparv-shortcode-display">
+                                <code>[caparv_randevu_formu]</code>
+                                <button type="button" class="caparv-copy-btn" onclick="navigator.clipboard.writeText('[caparv_randevu_formu]')">
                                     <span class="dashicons dashicons-clipboard"></span>
                                     Kopyala
                                 </button>
                             </div>
-                            <p class="dentsoft-help-text">
+                            <p class="caparv-help-text">
                                 <span class="dashicons dashicons-info"></span>
                                 Bu shortcode'u randevu formunu göstermek istediğiniz sayfaya ekleyin.
                             </p>
@@ -197,9 +285,9 @@ if (isset($_GET['settings-updated']) && $_GET['settings-updated'] === 'true') {
                 </div>
             </div>
             
-            <div class="dentsoft-settings-footer">
+            <div class="caparv-settings-footer">
                 <?php submit_button('Değişiklikleri Kaydet', 'primary large', 'submit', false); ?>
-                <button type="button" class="button button-secondary dentsoft-reset-btn" onclick="return confirm('Tüm ayarları varsayılan değerlere döndürmek istediğinize emin misiniz?')">
+                <button type="button" class="button button-secondary caparv-reset-btn" onclick="return confirm('Tüm ayarları varsayılan değerlere döndürmek istediğinize emin misiniz?')">
                     <span class="dashicons dashicons-update"></span>
                     Varsayılana Sıfırla
                 </button>
@@ -210,14 +298,14 @@ if (isset($_GET['settings-updated']) && $_GET['settings-updated'] === 'true') {
 
 <script>
 jQuery(document).ready(function($) {
-    const colorInput = $('#dentsoft_primary_color');
-    const colorText = $('.dentsoft-color-text');
+    const colorInput = $('#caparv_primary_color');
+    const colorText = $('.caparv-color-text');
     
     colorInput.on('input change', function() {
         colorText.val($(this).val());
     });
     
-    $('.dentsoft-copy-btn').on('click', function() {
+    $('.caparv-copy-btn').on('click', function() {
         const btn = $(this);
         const originalText = btn.find('.dashicons').next().text();
         
@@ -230,19 +318,19 @@ jQuery(document).ready(function($) {
         }, 2000);
     });
     
-    $('.dentsoft-reset-btn').on('click', function(e) {
+    $('.caparv-reset-btn').on('click', function(e) {
         if (confirm('Tüm ayarları varsayılan değerlere döndürmek istediğinize emin misiniz?')) {
-            $('#dentsoft_vkn').val('');
-            $('#dentsoft_api_url').val('https://clinic.dentsoft.com.tr/Api/v1');
-            $('#dentsoft_bearer_token').val('');
-            $('input[name="dentsoft_settings[enable_email_notifications]"]').prop('checked', true);
-            $('#dentsoft_primary_color').val('#00cc61');
+            $('#caparv_vkn').val('');
+            $('#caparv_api_url').val('https://clinic.dentsoft.com.tr/Api/v1');
+            $('#caparv_bearer_token').val('');
+            $('input[name="caparv_settings[enable_email_notifications]"]').prop('checked', true);
+            $('#caparv_primary_color').val('#00cc61');
             colorText.val('#00cc61');
-            $('#dentsoft_success_message').val('Randevunuz başarıyla oluşturuldu!');
+            $('#caparv_success_message').val('Randevunuz başarıyla oluşturuldu!');
         }
     });
     
-    const apiUrlInput = $('#dentsoft_api_url');
+    const apiUrlInput = $('#caparv_api_url');
     const originalApiUrl = apiUrlInput.val();
     
     apiUrlInput.on('keydown paste cut', function(e) {

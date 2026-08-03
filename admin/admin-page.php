@@ -1,415 +1,190 @@
 <?php
+/**
+ * Çapa Randevu — İşlem Kayıtları (operasyon izleme)
+ *
+ * ⚠ Bu ekran bir HASTA LİSTESİ DEĞİLDİR. Klinik randevu defteri kendi
+ * panelindedir; aynı listeyi burada ikinci kez tutmak iki ayrı kişisel
+ * veri deposu demek olurdu. Burada yalnız işlem izi görünür.
+ */
+
 if (!defined('ABSPATH')) {
     exit;
 }
-?>
 
-<div class="wrap dentsoft-admin-wrap">
-    <h1 class="wp-heading-inline">
-        <span class="dashicons dashicons-calendar-alt"></span>
-        DentSoft Randevu Sistemi
-    </h1>
-    
-    <hr class="wp-header-end">
-    
-    <div class="dentsoft-admin-container">
-        <div class="dentsoft-filters">
-            <div class="filter-group">
-                <input type="text" id="dentsoft-search" class="dentsoft-search-input" placeholder="PNR, hasta adı veya telefon ile ara...">
-            </div>
-            <div class="filter-group">
-                <select id="dentsoft-status-filter" class="dentsoft-select">
-                    <option value="">Tüm Durumlar</option>
-                    <option value="pending">Bekliyor</option>
-                    <option value="confirmed">Onaylandı</option>
-                    <option value="completed">Tamamlandı</option>
-                    <option value="cancelled">İptal Edildi</option>
-                </select>
-            </div>
-            <div class="filter-group">
-                <button type="button" id="dentsoft-filter-btn" class="button button-primary">Filtrele</button>
-                <button type="button" id="dentsoft-refresh-btn" class="button">Yenile</button>
-            </div>
-        </div>
-        
-        <div class="dentsoft-stats-row">
-            <div class="dentsoft-stat-card">
-                <div class="stat-icon pending">
-                    <span class="dashicons dashicons-clock"></span>
-                </div>
-                <div class="stat-content">
-                    <h3 id="stat-pending">0</h3>
-                    <p>Bekleyen</p>
-                </div>
-            </div>
-            <div class="dentsoft-stat-card">
-                <div class="stat-icon confirmed">
-                    <span class="dashicons dashicons-yes-alt"></span>
-                </div>
-                <div class="stat-content">
-                    <h3 id="stat-confirmed">0</h3>
-                    <p>Onaylanan</p>
-                </div>
-            </div>
-            <div class="dentsoft-stat-card">
-                <div class="stat-icon completed">
-                    <span class="dashicons dashicons-saved"></span>
-                </div>
-                <div class="stat-content">
-                    <h3 id="stat-completed">0</h3>
-                    <p>Tamamlanan</p>
-                </div>
-            </div>
-            <div class="dentsoft-stat-card">
-                <div class="stat-icon cancelled">
-                    <span class="dashicons dashicons-dismiss"></span>
-                </div>
-                <div class="stat-content">
-                    <h3 id="stat-cancelled">0</h3>
-                    <p>İptal Edilen</p>
-                </div>
-            </div>
-        </div>
-        
-        <div class="dentsoft-table-wrapper">
-            <table class="wp-list-table widefat fixed striped dentsoft-appointments-table">
-                <thead>
-                    <tr>
-                        <th class="column-id">ID</th>
-                        <th class="column-patient">Hasta</th>
-                        <th class="column-doctor">Hekim</th>
-                        <th class="column-clinic">Klinik</th>
-                        <th class="column-datetime">Randevu Tarihi</th>
-                        <th class="column-pnr">PNR No</th>
-                        <th class="column-status">Durum</th>
-                        <th class="column-actions">İşlemler</th>
-                    </tr>
-                </thead>
-                <tbody id="dentsoft-appointments-list">
-                    <tr>
-                        <td colspan="8" class="text-center">
-                            <div class="dentsoft-loading">
-                                <span class="spinner is-active"></span>
-                                <p>Randevular yükleniyor...</p>
-                            </div>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-        
-        <div class="dentsoft-pagination">
-            <div class="pagination-info">
-                <span id="dentsoft-showing-info">0 randevu gösteriliyor</span>
-            </div>
-            <div class="pagination-controls">
-                <button type="button" id="dentsoft-prev-page" class="button" disabled>
-                    <span class="dashicons dashicons-arrow-left-alt2"></span> Önceki
-                </button>
-                <span id="dentsoft-page-info" class="page-info">Sayfa 1 / 1</span>
-                <button type="button" id="dentsoft-next-page" class="button" disabled>
-                    Sonraki <span class="dashicons dashicons-arrow-right-alt2"></span>
-                </button>
-            </div>
-        </div>
+global $wpdb;
+$t = Caparv_DB::table();
+
+$var = ($wpdb->get_var($wpdb->prepare('SHOW TABLES LIKE %s', $t)) === $t);
+
+$ozet = array('bugun' => 0, 'hafta' => 0, 'hata' => 0, 'test' => 0, 'toplam' => 0);
+if ($var) {
+    $ozet['bugun']  = (int) $wpdb->get_var($wpdb->prepare("SELECT COUNT(*) FROM {$t} WHERE test=0 AND DATE(created_at)=%s", current_time('Y-m-d')));
+    $ozet['hafta']  = (int) $wpdb->get_var("SELECT COUNT(*) FROM {$t} WHERE test=0 AND created_at >= DATE_SUB(NOW(), INTERVAL 7 DAY)");
+    $ozet['hata']   = (int) $wpdb->get_var("SELECT COUNT(*) FROM {$t} WHERE test=0 AND durum <> 'basarili' AND created_at >= DATE_SUB(NOW(), INTERVAL 7 DAY)");
+    $ozet['test']   = (int) $wpdb->get_var("SELECT COUNT(*) FROM {$t} WHERE test=1");
+    $ozet['toplam'] = (int) $wpdb->get_var("SELECT COUNT(*) FROM {$t}");
+}
+?>
+<div class="wrap caparv-wrap">
+    <h1>Çapa Randevu — İşlem Kayıtları</h1>
+
+    <?php if (!$var) : ?>
+        <div class="notice notice-error"><p>
+            İşlem kaydı tablosu bulunamadı. Sayfayı yenileyin — tablo sürüm kontrolüyle
+            kendiliğinden kurulur. Sorun sürerse veritabanı kullanıcısının
+            <code>CREATE TABLE</code> yetkisini kontrol edin.
+        </p></div>
+    <?php endif; ?>
+
+    <?php if (Caparv_Plugin::test_modu()) : ?>
+        <div class="notice notice-warning"><p>
+            <strong>TEST MODU AÇIK.</strong> Hastalara e-posta gitmiyor, tüm bildirimler
+            personel adresine yönleniyor. Ölçüm olayları <code>test</code> etiketiyle
+            gönderiliyor. Canlıya almadan önce Ayarlar'dan kapatın.
+        </p></div>
+    <?php endif; ?>
+
+    <div class="caparv-ozet">
+        <div class="caparv-kutu"><span class="caparv-sayi"><?php echo esc_html($ozet['bugun']); ?></span><span class="caparv-etiket">Bugün</span></div>
+        <div class="caparv-kutu"><span class="caparv-sayi"><?php echo esc_html($ozet['hafta']); ?></span><span class="caparv-etiket">Son 7 gün</span></div>
+        <div class="caparv-kutu <?php echo $ozet['hata'] > 0 ? 'caparv-uyari' : ''; ?>"><span class="caparv-sayi"><?php echo esc_html($ozet['hata']); ?></span><span class="caparv-etiket">Son 7 günde hata</span></div>
+        <div class="caparv-kutu"><span class="caparv-sayi"><?php echo esc_html($ozet['test']); ?></span><span class="caparv-etiket">Test kaydı</span></div>
     </div>
+
+    <?php
+    // Anonim sayac tablosunun tip dagilimi. Sayac bu eklentinin degil,
+    // CapaOrtodonti_Site/site-customizations.php'nin tablosudur; buradan
+    // yalniz OKUNUR. Amac: olcum hattinin calistigini ve test kayitlarinin
+    // 'test' etiketiyle ayrildigini canliya almadan gorebilmek.
+    $say_t = $wpdb->prefix . 'capa_randevu_sayac';
+    if ($wpdb->get_var($wpdb->prepare('SHOW TABLES LIKE %s', $say_t)) === $say_t) :
+        $say = $wpdb->get_results(
+            "SELECT tip, SUM(adet) AS n FROM {$say_t}
+             WHERE gun >= DATE_SUB(CURDATE(), INTERVAL 7 DAY)
+             GROUP BY tip ORDER BY n DESC", ARRAY_A);
+    ?>
+        <p class="caparv-arac">
+            <strong>Sayaç (son 7 gün):</strong>
+            <?php if (empty($say)) : ?>
+                <span class="caparv-not">kayıt yok</span>
+            <?php else : foreach ($say as $sr) : ?>
+                <span class="caparv-rozet <?php echo $sr['tip'] === 'test' ? 'caparv-notr' : 'caparv-ok'; ?>">
+                    <?php echo esc_html($sr['tip']); ?>: <?php echo (int) $sr['n']; ?>
+                </span>
+            <?php endforeach; endif; ?>
+            <span class="caparv-not">
+                <code>test</code> satırları dashboard'a gönderilmez.
+                Buradaki dağılım ölçüm hattının doğru etiketlediğini gösterir.
+            </span>
+        </p>
+    <?php endif; ?>
+
+    <p class="caparv-arac">
+        <label>Durum:
+            <select id="caparv-f-durum">
+                <option value="hepsi">Hepsi</option>
+                <option value="basarili">Başarılı</option>
+                <option value="api_hatasi">API hatası</option>
+                <option value="dogrulama_hatasi">Doğrulama hatası</option>
+                <option value="iptal">İptal</option>
+            </select>
+        </label>
+        <label>Kayıt:
+            <select id="caparv-f-test">
+                <option value="0">Yalnız gerçek</option>
+                <option value="1">Yalnız test</option>
+                <option value="hepsi">Hepsi</option>
+            </select>
+        </label>
+        <button class="button" id="caparv-yenile">Yenile</button>
+        <button class="button button-link-delete" id="caparv-test-sil">Test kayıtlarını sil (<?php echo esc_html($ozet['test']); ?>)</button>
+        <span class="caparv-not">Kayıtlar <?php echo esc_html(Caparv_DB::SAKLAMA_GUN); ?> gün sonra otomatik silinir.</span>
+    </p>
+
+    <table class="wp-list-table widefat fixed striped">
+        <thead>
+            <tr>
+                <th style="width:140px">Zaman</th>
+                <th style="width:100px">İşlem Kodu</th>
+                <th style="width:110px">PNR</th>
+                <th style="width:120px">Durum</th>
+                <th>Hekim</th>
+                <th style="width:150px">Randevu</th>
+                <th style="width:60px">Adım</th>
+                <th style="width:90px">Cihaz</th>
+                <th>Hata</th>
+            </tr>
+        </thead>
+        <tbody id="caparv-govde">
+            <tr><td colspan="9">Yükleniyor…</td></tr>
+        </tbody>
+    </table>
+
+    <p id="caparv-sayfalama"></p>
 </div>
 
 <script>
-jQuery(document).ready(function($) {
-    const DentsoftAdmin = {
-        currentPage: 1,
-        totalPages: 1,
-        perPage: 20,
-        
-        init() {
-            this.bindEvents();
-            this.loadAppointments();
-            this.loadStats();
-        },
-        
-        bindEvents() {
-            $('#dentsoft-filter-btn').on('click', () => this.filterAppointments());
-            $('#dentsoft-refresh-btn').on('click', () => this.loadAppointments());
-            $('#dentsoft-search').on('keypress', (e) => {
-                if (e.which === 13) this.filterAppointments();
-            });
-            $('#dentsoft-prev-page').on('click', () => this.prevPage());
-            $('#dentsoft-next-page').on('click', () => this.nextPage());
-            
-            $(document).on('click', '.dentsoft-status-btn', (e) => this.updateStatus(e));
-            $(document).on('click', '.dentsoft-delete-btn', (e) => this.deleteAppointment(e));
-        },
-        
-        loadAppointments(page = 1) {
-            const search = $('#dentsoft-search').val();
-            const status = $('#dentsoft-status-filter').val();
-            
-            $.ajax({
-                url: dentsoftAdmin.ajaxUrl,
-                type: 'POST',
-                data: {
-                    action: 'dentsoft_get_appointments',
-                    nonce: dentsoftAdmin.nonce,
-                    page: page,
-                    per_page: this.perPage,
-                    search: search,
-                    status: status
-                },
-                beforeSend: () => {
-                    $('#dentsoft-appointments-list').html('<tr><td colspan="8" class="text-center"><span class="spinner is-active"></span></td></tr>');
-                },
-                success: (response) => {
-                    if (response.success) {
-                        this.renderAppointments(response.data);
-                        this.updatePagination(response.data);
-                    } else {
-                        this.showError(response.data.message);
-                    }
-                },
-                error: () => {
-                    this.showError('Randevular yüklenirken bir hata oluştu.');
-                }
-            });
-        },
-        
-        renderAppointments(data) {
-            const tbody = $('#dentsoft-appointments-list');
-            
-            if (!data.appointments || data.appointments.length === 0) {
-                tbody.html('<tr><td colspan="8" class="text-center">Randevu bulunamadı.</td></tr>');
+jQuery(function ($) {
+    var sayfa = 1;
+
+    function esc(v) {
+        return $('<div>').text(v === null || typeof v === 'undefined' ? '' : String(v)).html();
+    }
+
+    function rozet(d) {
+        var ad = { basarili: 'Başarılı', api_hatasi: 'API hatası', dogrulama_hatasi: 'Doğrulama', iptal: 'İptal' }[d] || d || '-';
+        var cls = (d === 'basarili') ? 'caparv-ok' : (d === 'iptal' ? 'caparv-notr' : 'caparv-kotu');
+        return '<span class="caparv-rozet ' + cls + '">' + esc(ad) + '</span>';
+    }
+
+    function yukle() {
+        $.post(caparvAdmin.ajaxUrl, {
+            action: 'caparv_get_appointments',
+            nonce: caparvAdmin.nonce,
+            sayfa: sayfa,
+            durum: $('#caparv-f-durum').val(),
+            test: $('#caparv-f-test').val()
+        }, function (r) {
+            if (!r || !r.success) {
+                $('#caparv-govde').html('<tr><td colspan="9">Kayıtlar okunamadı.</td></tr>');
                 return;
             }
-            
-            let html = '';
-            data.appointments.forEach(appointment => {
-                const date = new Date(appointment.appointment_date);
-                const formattedDate = date.toLocaleDateString('tr-TR', {
-                    day: '2-digit',
-                    month: '2-digit',
-                    year: 'numeric'
-                });
-                const formattedTime = date.toLocaleTimeString('tr-TR', {
-                    hour: '2-digit',
-                    minute: '2-digit'
-                });
-                
-                html += `<tr>
-                    <td>${appointment.id}</td>
-                    <td>
-                        <strong>${appointment.patient_name} ${appointment.patient_surname}</strong><br>
-                        <small>${appointment.patient_phone}</small>
-                    </td>
-                    <td>${appointment.doctor_name}</td>
-                    <td>
-                        <strong>${appointment.clinic_name}</strong><br>
-                        <small>${appointment.clinic_phone || ''}</small>
-                    </td>
-                    <td>
-                        <strong>${formattedDate}</strong><br>
-                        <small>${formattedTime}</small>
-                    </td>
-                    <td><code>${appointment.pnr_no}</code></td>
-                    <td>${this.getStatusBadge(appointment.appointment_status)}</td>
-                    <td>${this.getActionButtons(appointment)}</td>
-                </tr>`;
-            });
-            
-            tbody.html(html);
-        },
-        
-        getStatusBadge(status) {
-            const badges = {
-                'pending': '<span class="dentsoft-badge badge-warning">Bekliyor</span>',
-                'confirmed': '<span class="dentsoft-badge badge-success">Onaylandı</span>',
-                'cancelled': '<span class="dentsoft-badge badge-danger">İptal</span>',
-                'completed': '<span class="dentsoft-badge badge-info">Tamamlandı</span>'
-            };
-            return badges[status] || badges['pending'];
-        },
-        
-        getActionButtons(appointment) {
-            let buttons = '';
-            
-            switch (appointment.appointment_status) {
-                case 'pending':
-                    buttons = `
-                        <button class="button button-small dentsoft-status-btn" data-id="${appointment.id}" data-status="confirmed" title="Onayla">
-                            <span class="dashicons dashicons-yes"></span>
-                        </button>
-                        <button class="button button-small dentsoft-status-btn" data-id="${appointment.id}" data-status="cancelled" title="İptal Et">
-                            <span class="dashicons dashicons-no"></span>
-                        </button>`;
-                    break;
-                case 'confirmed':
-                    buttons = `
-                        <button class="button button-small dentsoft-status-btn" data-id="${appointment.id}" data-status="completed" title="Tamamla">
-                            <span class="dashicons dashicons-saved"></span>
-                        </button>
-                        <button class="button button-small dentsoft-status-btn" data-id="${appointment.id}" data-status="cancelled" title="İptal Et">
-                            <span class="dashicons dashicons-no"></span>
-                        </button>`;
-                    break;
-                case 'cancelled':
-                    buttons = `
-                        <button class="button button-small dentsoft-status-btn" data-id="${appointment.id}" data-status="pending" title="Tekrar Aktif Et">
-                            <span class="dashicons dashicons-update"></span>
-                        </button>`;
-                    break;
-            }
-            
-            buttons += `
-                <button class="button button-small dentsoft-delete-btn" data-id="${appointment.id}" title="Sil">
-                    <span class="dashicons dashicons-trash"></span>
-                </button>`;
-            
-            return `<div class="dentsoft-action-buttons">${buttons}</div>`;
-        },
-        
-        updateStatus(e) {
-            const btn = $(e.currentTarget);
-            const id = btn.data('id');
-            const status = btn.data('status');
-            
-            if (!confirm('Randevu durumunu güncellemek istediğinize emin misiniz?')) {
+            var k = r.data.kayitlar || [];
+            if (!k.length) {
+                $('#caparv-govde').html('<tr><td colspan="9">Kayıt yok.</td></tr>');
+                $('#caparv-sayfalama').text('');
                 return;
             }
-            
-            $.ajax({
-                url: dentsoftAdmin.ajaxUrl,
-                type: 'POST',
-                data: {
-                    action: 'dentsoft_update_appointment_status',
-                    nonce: dentsoftAdmin.nonce,
-                    appointment_id: id,
-                    status: status
-                },
-                success: (response) => {
-                    if (response.success) {
-                        this.showSuccess(response.data.message);
-                        this.loadAppointments(this.currentPage);
-                        this.loadStats();
-                    } else {
-                        this.showError(response.data.message);
-                    }
-                }
+            var h = '';
+            k.forEach(function (s) {
+                h += '<tr' + (String(s.test) === '1' ? ' class="caparv-test-satir"' : '') + '>'
+                  + '<td>' + esc(s.created_at) + '</td>'
+                  + '<td><code>' + esc(s.islem_kodu) + '</code></td>'
+                  + '<td>' + esc(s.pnr_no || '-') + '</td>'
+                  + '<td>' + rozet(s.durum) + '</td>'
+                  + '<td>' + esc(s.hekim_adi || '-') + '</td>'
+                  + '<td>' + esc((s.randevu_tarihi || '-') + ' ' + (s.randevu_saati || '')) + '</td>'
+                  + '<td>' + esc(s.adim) + '</td>'
+                  + '<td>' + esc(s.cihaz) + '</td>'
+                  + '<td>' + esc(s.hata_ozeti || '') + '</td>'
+                  + '</tr>';
             });
-        },
-        
-        deleteAppointment(e) {
-            const btn = $(e.currentTarget);
-            const id = btn.data('id');
-            
-            if (!confirm('Bu randevuyu silmek istediğinize emin misiniz? Bu işlem geri alınamaz!')) {
-                return;
-            }
-            
-            $.ajax({
-                url: dentsoftAdmin.ajaxUrl,
-                type: 'POST',
-                data: {
-                    action: 'dentsoft_delete_appointment',
-                    nonce: dentsoftAdmin.nonce,
-                    appointment_id: id
-                },
-                success: (response) => {
-                    if (response.success) {
-                        this.showSuccess(response.data.message);
-                        this.loadAppointments(this.currentPage);
-                        this.loadStats();
-                    } else {
-                        this.showError(response.data.message);
-                    }
-                }
-            });
-        },
-        
-        loadStats() {
-            $.ajax({
-                url: dentsoftAdmin.ajaxUrl,
-                type: 'POST',
-                data: {
-                    action: 'dentsoft_get_appointments',
-                    nonce: dentsoftAdmin.nonce,
-                    per_page: 1000
-                },
-                success: (response) => {
-                    if (response.success && response.data.appointments) {
-                        const stats = {
-                            pending: 0,
-                            confirmed: 0,
-                            completed: 0,
-                            cancelled: 0
-                        };
-                        
-                        response.data.appointments.forEach(apt => {
-                            if (stats[apt.appointment_status] !== undefined) {
-                                stats[apt.appointment_status]++;
-                            }
-                        });
-                        
-                        $('#stat-pending').text(stats.pending);
-                        $('#stat-confirmed').text(stats.confirmed);
-                        $('#stat-completed').text(stats.completed);
-                        $('#stat-cancelled').text(stats.cancelled);
-                    }
-                }
-            });
-        },
-        
-        filterAppointments() {
-            this.currentPage = 1;
-            this.loadAppointments(1);
-        },
-        
-        prevPage() {
-            if (this.currentPage > 1) {
-                this.currentPage--;
-                this.loadAppointments(this.currentPage);
-            }
-        },
-        
-        nextPage() {
-            if (this.currentPage < this.totalPages) {
-                this.currentPage++;
-                this.loadAppointments(this.currentPage);
-            }
-        },
-        
-        updatePagination(data) {
-            this.currentPage = data.page;
-            this.totalPages = data.total_pages;
-            
-            $('#dentsoft-page-info').text(`Sayfa ${data.page} / ${data.total_pages}`);
-            $('#dentsoft-showing-info').text(`${data.total} randevu bulundu`);
-            
-            $('#dentsoft-prev-page').prop('disabled', data.page <= 1);
-            $('#dentsoft-next-page').prop('disabled', data.page >= data.total_pages);
-        },
-        
-        showSuccess(message) {
-            this.showNotice(message, 'success');
-        },
-        
-        showError(message) {
-            this.showNotice(message, 'error');
-        },
-        
-        showNotice(message, type) {
-            const notice = $(`
-                <div class="notice notice-${type} is-dismissible">
-                    <p>${message}</p>
-                </div>
-            `);
-            
-            $('.dentsoft-admin-wrap h1').after(notice);
-            
-            setTimeout(() => {
-                notice.fadeOut(() => notice.remove());
-            }, 3000);
-        }
-    };
-    
-    DentsoftAdmin.init();
+            $('#caparv-govde').html(h);
+            $('#caparv-sayfalama').text('Sayfa ' + r.data.sayfa + ' / ' + Math.max(1, r.data.sayfalar) + ' — toplam ' + r.data.toplam + ' kayıt');
+        });
+    }
+
+    $('#caparv-yenile').on('click', function (e) { e.preventDefault(); sayfa = 1; yukle(); });
+    $('#caparv-f-durum, #caparv-f-test').on('change', function () { sayfa = 1; yukle(); });
+
+    $('#caparv-test-sil').on('click', function (e) {
+        e.preventDefault();
+        if (!window.confirm('Tüm test kayıtları silinecek. Onaylıyor musunuz?')) { return; }
+        $.post(caparvAdmin.ajaxUrl, { action: 'caparv_purge_test', nonce: caparvAdmin.nonce }, function () {
+            location.reload();
+        });
+    });
+
+    yukle();
 });
 </script>
