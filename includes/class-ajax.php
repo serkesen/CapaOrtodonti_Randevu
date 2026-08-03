@@ -413,7 +413,7 @@ class Caparv_Ajax_Handlers {
     }
 
     private function caparv_email_shell($inner) {
-        $logo = 'https://capaortodonti.com/wp-content/uploads/capa-logo-email-380.png';
+        $logo = 'https://capaortodonti.com/wp-content/uploads/capa-logo-email-380-v2.png';
         return '<!DOCTYPE html><html lang="tr"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>'
             . '<body style="margin:0;padding:0;background:#f4f5f7;font-family:Arial,Helvetica,sans-serif;">'
             . '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#f4f5f7;padding:24px 12px;"><tr><td align="center">'
