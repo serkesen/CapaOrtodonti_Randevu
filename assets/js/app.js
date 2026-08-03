@@ -14,8 +14,8 @@
         window.addEventListener('load', __dsResetScroll);
     }
 
-    const DentSoftApp = {
-        config: window.dentsoftConfig || {},
+    const CaparvApp = {
+        config: window.caparvConfig || {},
         currentStep: 1,
         selectedData: {
             clinic: null,
@@ -43,29 +43,29 @@
         },
 
         setupEventListeners() {
-            $(document).on('click', '.dentsoft-btn-next', () => this.nextStep());
-            $(document).on('click', '.dentsoft-btn-prev', () => this.prevStep());
-            $(document).on('click', '.dentsoft-btn-prev-week', () => this.changeWeek(-1));
-            $(document).on('click', '.dentsoft-btn-next-week', () => this.changeWeek(1));
-            $(document).on('click', '.dentsoft-time-slot', (e) => this.selectTimeSlot(e));
+            $(document).on('click', '.caparv-btn-next', () => this.nextStep());
+            $(document).on('click', '.caparv-btn-prev', () => this.prevStep());
+            $(document).on('click', '.caparv-btn-prev-week', () => this.changeWeek(-1));
+            $(document).on('click', '.caparv-btn-next-week', () => this.changeWeek(1));
+            $(document).on('click', '.caparv-time-slot', (e) => this.selectTimeSlot(e));
 
-            $('#dentsoft-submit-btn').on('click', () => this.submitAppointment());
-            $('#dentsoft-new-appointment-btn').on('click', () => this.resetForm());
-            $('#dentsoft-kvkk-link').on('click', (e) => this.showKVKK(e));
-            $('.dentsoft-modal-close').on('click', () => this.closeModal());
+            $('#caparv-submit-btn').on('click', () => this.submitAppointment());
+            $('#caparv-new-appointment-btn').on('click', () => this.resetForm());
+            $('#caparv-kvkk-link').on('click', (e) => this.showKVKK(e));
+            $('.caparv-modal-close').on('click', () => this.closeModal());
 
-            $('#dentsoft-query-appointment-btn, #dentsoft-header-query-btn').on('click', () => this.showQuerySection());
-            $('#dentsoft-query-submit-btn').on('click', () => this.queryAppointment());
-            $('#dentsoft-query-close-btn').on('click', () => this.hideQuerySection());
-            $('#dentsoft-cancel-appointment-btn').on('click', () => this.confirmCancelAppointment());
+            $('#caparv-query-appointment-btn, #caparv-header-query-btn').on('click', () => this.showQuerySection());
+            $('#caparv-query-submit-btn').on('click', () => this.queryAppointment());
+            $('#caparv-query-close-btn').on('click', () => this.hideQuerySection());
+            $('#caparv-cancel-appointment-btn').on('click', () => this.confirmCancelAppointment());
 
-            $('#dentsoft-patient-phone').on('input', function () {
+            $('#caparv-patient-phone').on('input', function () {
                 let value = $(this).val().replace(/\D/g, '');
                 if (value.length > 10) value = value.substring(0, 10);
                 $(this).val(value);
             });
 
-            $('#dentsoft-patient-number').on('input', function () {
+            $('#caparv-patient-number').on('input', function () {
                 let value = $(this).val().replace(/\D/g, '');
                 if (value.length > 11) value = value.substring(0, 11);
                 $(this).val(value);
@@ -74,7 +74,7 @@
 
         initializePlugins() {
             // Select2 init'i renderDoctors icinde (v4, avatar template'li) yapilir.
-            // Klinik select duz birakildi; global .dentsoft-select2 init'i kaldirildi.
+            // Klinik select duz birakildi; global .caparv-select2 init'i kaldirildi.
         },
 
         loadClinics() {
@@ -108,16 +108,16 @@
         },
 
         renderClinics(clinics) {
-            const $select = $('#dentsoft-clinic-select');
+            const $select = $('#caparv-clinic-select');
 
             // Klinik adimi gizli; Select2 KULLANILMIYOR (eski select2 v3.4.1
             // gizli select'te 'query function not defined' hatasi verip
-            // DentSoftApp'i cokertiyordu). Sade <select> + change olayi.
+            // CaparvApp'i cokertiyordu). Sade <select> + change olayi.
             if ($select.data('select2')) {
                 try { $select.select2('destroy'); } catch (e) {}
             }
 
-            $select.off('change.dentsoft');
+            $select.off('change.caparv');
             $select.empty().append('<option value="">Klinik Seçiniz...</option>');
 
             if (clinics && clinics.length > 0) {
@@ -129,28 +129,28 @@
                     $select.append($option);
                 });
 
-                $select.on('change.dentsoft', () => {
+                $select.on('change.caparv', () => {
                     this.onClinicChange();
                 });
 
                 if (clinics.length === 1) {
-                    $select.val(clinics[0].ID).trigger('change.dentsoft');
+                    $select.val(clinics[0].ID).trigger('change.caparv');
                 }
             }
         },
 
         onClinicChange() {
-            const $select = $('#dentsoft-clinic-select');
+            const $select = $('#caparv-clinic-select');
             const clinicId = $select.val();
 
             this.selectedData.doctor = null;
-            $('.dentsoft-btn-next[data-step="2"]').prop('disabled', true);
+            $('.caparv-btn-next[data-step="2"]').prop('disabled', true);
 
             if (clinicId) {
                 const clinicData = $select.find('option:selected').data('clinic');
                 if (clinicData) {
                     this.selectedData.clinic = clinicData;
-                    $('.dentsoft-btn-next[data-step="1"]').prop('disabled', false);
+                    $('.caparv-btn-next[data-step="1"]').prop('disabled', false);
                     this.updateSelectionSummary();
                     this.loadDoctors(clinicData.ID);
                     // Tek klinik: klinik adimi atlanir, dogrudan hekim adimina gec
@@ -158,7 +158,7 @@
                 }
             } else {
                 this.selectedData.clinic = null;
-                $('.dentsoft-btn-next[data-step="1"]').prop('disabled', true);
+                $('.caparv-btn-next[data-step="1"]').prop('disabled', true);
                 this.updateSelectionSummary();
             }
         },
@@ -190,7 +190,7 @@
         },
 
         renderDoctors(doctors) {
-            const $select = $('#dentsoft-doctor-select');
+            const $select = $('#caparv-doctor-select');
 
             if ($select.data('select2')) {
                 $select.select2('destroy');
@@ -252,7 +252,7 @@
                 $select.select2({
                     placeholder: 'Hekim Seçiniz...',
                     minimumResultsForSearch: Infinity,
-                    dropdownCssClass: 'dentsoft-doctor-dropdown',
+                    dropdownCssClass: 'caparv-doctor-dropdown',
                     templateResult: this.formatDoctorOption.bind(this),
                     templateSelection: this.formatDoctorSelection.bind(this),
                     escapeMarkup: function (m) { return m; }
@@ -260,7 +260,7 @@
                     this.onDoctorChange();
                 });
             } else {
-                $('#dentsoft-doctor-error').text('Bu klinikde kayıtlı hekim bulunamadı.').show();
+                $('#caparv-doctor-error').text('Bu klinikde kayıtlı hekim bulunamadı.').show();
             }
         },
 
@@ -273,11 +273,11 @@
             const avatar = $option.data('avatar');
 
             return `
-                <div class="dentsoft-doctor-item">
-                    <img class="dentsoft-doctor-avatar" src="${avatar}" alt="" loading="lazy">
-                    <div class="dentsoft-doctor-info">
-                        <div class="dentsoft-doctor-name">${item.text}${role ? ' - ' + role : ''}</div>
-                        <div class="dentsoft-doctor-nearest">${nearest}</div>
+                <div class="caparv-doctor-item">
+                    <img class="caparv-doctor-avatar" src="${avatar}" alt="" loading="lazy">
+                    <div class="caparv-doctor-info">
+                        <div class="caparv-doctor-name">${item.text}${role ? ' - ' + role : ''}</div>
+                        <div class="caparv-doctor-nearest">${nearest}</div>
                     </div>
                 </div>
             `;
@@ -300,13 +300,13 @@
         },
 
         onDoctorChange() {
-            const $select = $('#dentsoft-doctor-select');
+            const $select = $('#caparv-doctor-select');
             const doctorId = $select.val();
 
             if (doctorId === 'GENEL_MUAYENE') {
                 // Genel Randevu (Muayene): sahte hekim nesnesi, DentSoft'a gitmez
                 this.selectedData.doctor = { User: { ID: 'GENEL_MUAYENE', FirstName: 'Genel Randevu', LastName: '', Roles: 'Tüm Tedaviler' } };
-                $('.dentsoft-btn-next[data-step="2"]').prop('disabled', false);
+                $('.caparv-btn-next[data-step="2"]').prop('disabled', false);
                 this.updateSelectionSummary();
                 return;
             }
@@ -315,20 +315,20 @@
                 const doctorData = $select.find('option:selected').data('doctor');
                 if (doctorData) {
                     this.selectedData.doctor = doctorData;
-                    $('.dentsoft-btn-next[data-step="2"]').prop('disabled', false);
+                    $('.caparv-btn-next[data-step="2"]').prop('disabled', false);
                     this.updateSelectionSummary();
                 }
             } else {
                 this.selectedData.doctor = null;
-                $('.dentsoft-btn-next[data-step="2"]').prop('disabled', true);
+                $('.caparv-btn-next[data-step="2"]').prop('disabled', true);
                 this.updateSelectionSummary();
             }
         },
 
         updateSelectionSummary() {
-            const $summary = $('#dentsoft-selection-summary');
-            const $clinicItem = $('#dentsoft-selected-clinic');
-            const $doctorItem = $('#dentsoft-selected-doctor');
+            const $summary = $('#caparv-selection-summary');
+            const $clinicItem = $('#caparv-selected-clinic');
+            const $doctorItem = $('#caparv-selected-doctor');
 
             if (this.selectedData.clinic) {
                 $clinicItem.find('.summary-text').text(this.selectedData.clinic.Name);
@@ -356,7 +356,7 @@
         loadGenelSlots() {
             // Genel Randevu sahte takvimi: 14 gun, Cmt 09:30-18:00, diger 09:30-19:00, 30dk, hepsi Available.
             // Pazar ve 12:30 renderPages/buildDayColumn filtrelerinde elenir.
-            $('#dentsoft-calendar-loading').hide();
+            $('#caparv-calendar-loading').hide();
             const pad = n => (n < 10 ? '0' + n : '' + n);
             const slots = {};
             const start = new Date(this.currentDate);
@@ -381,9 +381,9 @@
                 slots[key] = arr;
             }
             this.renderCalendar(slots);
-            $('#dentsoft-calendar-controls').hide();
-            $('#dentsoft-calendar-container').show();
-            $('#dentsoft-no-appointments').hide();
+            $('#caparv-calendar-controls').hide();
+            $('#caparv-calendar-container').show();
+            $('#caparv-no-appointments').hide();
         },
 
         loadAppointmentSlots() {
@@ -395,23 +395,23 @@
             const doctorId = this.selectedData.doctor.User.ID;
             const dateStr = this.formatDate(this.currentDate);
 
-            $('#dentsoft-calendar-loading').show();
-            $('#dentsoft-calendar-container').hide();
+            $('#caparv-calendar-loading').show();
+            $('#caparv-calendar-container').hide();
 
             const ajaxSettings = {
                 url: `${this.config.apiUrl}/Appointment/Doctor/${clinicId}/${doctorId}/${dateStr}/${this.dateRange}`,
                 method: 'GET',
                 dataType: 'json',
                 success: (response) => {
-                    $('#dentsoft-calendar-loading').hide();
+                    $('#caparv-calendar-loading').hide();
 
                     if (response.Response && response.Response[0]) {
                         const slots = response.Response[0].Slot;
                         if (slots && Object.keys(slots).length > 0) {
                             this.renderCalendar(slots);
-                            $('#dentsoft-calendar-controls').show();
-                            $('#dentsoft-calendar-container').show();
-                            $('#dentsoft-no-appointments').hide();
+                            $('#caparv-calendar-controls').show();
+                            $('#caparv-calendar-container').show();
+                            $('#caparv-no-appointments').hide();
                         } else {
                             this.showNoAppointments();
                         }
@@ -420,7 +420,7 @@
                     }
                 },
                 error: () => {
-                    $('#dentsoft-calendar-loading').hide();
+                    $('#caparv-calendar-loading').hide();
                     this.showError('Randevu saatleri yüklenirken hata oluştu.');
                 }
             };
@@ -435,17 +435,17 @@
         },
 
         renderCalendar(slots) {
-            const $container = $('#dentsoft-calendar-container');
+            const $container = $('#caparv-calendar-container');
             $container.empty();
 
             this.currentSlots = slots;
             this.loadingMore = false;
             this.noMoreSlots = false;
 
-            const $track = $('<div>').addClass('dentsoft-cal-track');
+            const $track = $('<div>').addClass('caparv-cal-track');
             this.renderPages($track, Object.keys(slots).sort());
 
-            const $dots = $('<div>').addClass('dentsoft-cal-dots');
+            const $dots = $('<div>').addClass('caparv-cal-dots');
             $container.append($track).append($dots);
 
             $track.on('scroll', () => {
@@ -462,29 +462,29 @@
         renderPages($track, dates) {
             dates = dates.filter(dd => new Date(dd).getDay() !== 0); // pazar - klinik kapali, hic gosterme
             for (let i = 0; i < dates.length; i += 4) {
-                const $page = $('<div>').addClass('dentsoft-cal-page');
+                const $page = $('<div>').addClass('caparv-cal-page');
                 dates.slice(i, i + 4).forEach(date => $page.append(this.buildDayColumn(date)));
                 $track.append($page);
             }
         },
 
         buildDots() {
-            const $track = $('.dentsoft-cal-track');
-            const $dots = $('.dentsoft-cal-dots');
+            const $track = $('.caparv-cal-track');
+            const $dots = $('.caparv-cal-dots');
             if (!$track.length || !$dots.length) return;
             $dots.empty();
-            const n = $track.find('.dentsoft-cal-page').length;
+            const n = $track.find('.caparv-cal-page').length;
             for (let i = 0; i < n; i++) {
-                $dots.append($('<span>').addClass('dentsoft-cal-dot'));
+                $dots.append($('<span>').addClass('caparv-cal-dot'));
             }
             this.updateActiveDot();
         },
 
         updateActiveDot() {
-            const t = $('.dentsoft-cal-track')[0];
+            const t = $('.caparv-cal-track')[0];
             if (!t) return;
             const active = Math.round(t.scrollLeft / t.clientWidth);
-            $('.dentsoft-cal-dot').removeClass('active').eq(active).addClass('active');
+            $('.caparv-cal-dot').removeClass('active').eq(active).addClass('active');
         },
 
         buildDayColumn(date) {
@@ -495,15 +495,15 @@
             const dayNum = d.getDate();
             const monthName = aylar[d.getMonth()];
 
-            const $col = $('<div>').addClass('dentsoft-day-col');
+            const $col = $('<div>').addClass('caparv-day-col');
             $col.append(`<div class="calendar-date-header"><span class="day-num">${dayNum} ${monthName}</span><span class="day-name">${dayName}</span></div>`);
 
-            const $list = $('<div>').addClass('dentsoft-time-list');
+            const $list = $('<div>').addClass('caparv-time-list');
             (this.currentSlots[date] || []).forEach(slot => {
                     if (slot.Time && slot.Time.Begin === '12:30') return; // 12:30 yemek molasi - hic gosterme
                 const isAvailable = slot.Type === 'Available';
                 const $btn = $('<button>')
-                    .addClass('dentsoft-time-slot')
+                    .addClass('caparv-time-slot')
                     .attr('type', 'button')
                     .data('date', date)
                     .data('time', slot.Time.Begin)
@@ -550,7 +550,7 @@
                             return;
                         }
                         newDates.forEach(dd => { this.currentSlots[dd] = newSlots[dd]; });
-                        this.renderPages($('.dentsoft-cal-track'), newDates);
+                        this.renderPages($('.caparv-cal-track'), newDates);
                         this.buildDots();
                     } else {
                         this.noMoreSlots = true;
@@ -582,20 +582,20 @@
                 $btn.removeClass('selected');
                 this.selectedData.date = null;
                 this.selectedData.time = null;
-                $('.dentsoft-btn-next').prop('disabled', true);
+                $('.caparv-btn-next').prop('disabled', true);
                 return;
             }
 
             const date = $btn.data('date');
             const time = $btn.data('time');
 
-            $('.dentsoft-time-slot').removeClass('selected');
+            $('.caparv-time-slot').removeClass('selected');
             $btn.addClass('selected');
 
             this.selectedData.date = date;
             this.selectedData.time = time;
 
-            $('.dentsoft-btn-next').prop('disabled', false);
+            $('.caparv-btn-next').prop('disabled', false);
         },
 
         changeWeek(direction) {
@@ -604,13 +604,13 @@
         },
 
         showNoAppointments() {
-            $('#dentsoft-calendar-controls').hide();
-            $('#dentsoft-calendar-container').hide();
-            $('#dentsoft-no-appointments').show();
+            $('#caparv-calendar-controls').hide();
+            $('#caparv-calendar-container').hide();
+            $('#caparv-no-appointments').show();
 
             if (this.selectedData.clinic && this.selectedData.clinic.ConcatInfo) {
                 const contact = this.selectedData.clinic.ConcatInfo;
-                let html = '<div class="dentsoft-contact-info">';
+                let html = '<div class="caparv-contact-info">';
 
                 if (contact.ContactPhone) {
                     html += `<p><strong>Telefon:</strong> <a href="tel:${contact.ContactPhone}">${contact.ContactPhone}</a></p>`;
@@ -623,7 +623,7 @@
                 }
 
                 html += '</div>';
-                $('#dentsoft-clinic-contact-info').html(html);
+                $('#caparv-clinic-contact-info').html(html);
             }
         },
 
@@ -631,16 +631,17 @@
             // Genel Randevu (Muayene): DentSoft API'ye GITMEZ, sadece WP'ye gidip mail tetikler. DB'ye yazilmaz.
             this.showLoading();
             const data = {
-                action: 'dentsoft_genel_randevu',
+                action: 'caparv_genel_randevu',
                 nonce: this.config.nonce,
-                patient_number: $('#dentsoft-patient-number').val(),
-                patient_name: $('#dentsoft-patient-name').val(),
-                patient_surname: $('#dentsoft-patient-surname').val(),
-                patient_phone: $('#dentsoft-patient-phone').val(),
-                patient_birthday: $('#dentsoft-patient-birthday').val(),
-                patient_email: $('#dentsoft-patient-email').val(),
+                patient_number: $('#caparv-patient-number').val(),
+                patient_name: $('#caparv-patient-name').val(),
+                patient_surname: $('#caparv-patient-surname').val(),
+                patient_phone: $('#caparv-patient-phone').val(),
+                patient_birthday: $('#caparv-patient-birthday').val(),
+                patient_email: $('#caparv-patient-email').val(),
                 clinic_name: (this.selectedData.clinic && this.selectedData.clinic.Name) || '',
-                appointment_date: (this.selectedData.date || '') + ' ' + (this.selectedData.time || '')
+                appointment_date: (this.selectedData.date || '') + ' ' + (this.selectedData.time || ''),
+                appointment_time: (this.selectedData.time || '')
             };
             $.ajax({
                 url: this.config.ajaxUrl,
@@ -649,7 +650,7 @@
                 success: (response) => {
                     this.hideLoading();
                     if (response.success) {
-                        this.showGenelSuccess();
+                        this.showGenelSuccess((response.data && response.data.islem_kodu) || '');
                     } else {
                         this.showError((response.data && response.data.message) || 'Talep gonderilemedi.');
                     }
@@ -693,27 +694,47 @@
                     method: 'POST',
                     keepalive: true,
                     headers: { 'Content-Type': 'application/json', 'X-WP-Nonce': cfg.sayNonce || '' },
-                    body: JSON.stringify({ tip: tip, hekim: hekim || '', gun_farki: fark })
+                    // TEST MODU: olcum hatti ATESLENIR ama 'test' etiketiyle gider.
+                    // Boylece hattin calistigini canliya almadan dogrularız, dashboard
+                    // verisi de kirlenmez (site-customizations.php > sorgu whitelist).
+                    body: JSON.stringify({
+                        tip: (cfg.testModu ? 'test' : tip),
+                        hekim: hekim || '',
+                        gun_farki: fark
+                    })
                 }).catch(function () {});
             } catch (e) {}
         },
 
-        showGenelSuccess() {
+        islemKoduGoster(kod) {
+            const $s = $('#caparv-islem-kodu');
+            if (!$s.length) return;
+            if (kod) {
+                $('#caparv-islem-kodu-deger').text(kod);
+                $s.show();
+            } else {
+                $s.hide();
+            }
+        },
+
+        showGenelSuccess(islemKodu) {
             try {
                 window.dataLayer = window.dataLayer || [];
                 window.dataLayer.push({
                     event: 'randevu_tamamlandi',
+                    test_modu: (this.config && this.config.testModu) ? 1 : 0,
                     randevu_tipi: 'genel',
                     hekim: 'Genel Randevu'
                 });
             } catch (e) {}
             this.capaSayac('genel', 'Genel Randevu', (this.selectedData && this.selectedData.date) || '');
             // Step 5 (basari ekrani) Genel Randevu'ya gore: PNR/Print yok, talep mesaji
-            $('#dentsoft-summary-patient').text($('#dentsoft-patient-name').val() + ' ' + $('#dentsoft-patient-surname').val());
-            $('#dentsoft-summary-clinic').text((this.selectedData.clinic && this.selectedData.clinic.Name) || '');
-            $('#dentsoft-summary-doctor').text('Genel Randevu - Tüm Tedaviler');
-            $('#dentsoft-summary-datetime').text((this.selectedData.date || '') + ' ' + (this.selectedData.time || ''));
-            $('#dentsoft-summary-pnr').text('Talebiniz alındı');
+            $('#caparv-summary-patient').text($('#caparv-patient-name').val() + ' ' + $('#caparv-patient-surname').val());
+            $('#caparv-summary-clinic').text((this.selectedData.clinic && this.selectedData.clinic.Name) || '');
+            $('#caparv-summary-doctor').text('Genel Randevu - Tüm Tedaviler');
+            $('#caparv-summary-datetime').text((this.selectedData.date || '') + ' ' + (this.selectedData.time || ''));
+            $('#caparv-summary-pnr').text('Talebiniz alındı');
+            this.islemKoduGoster(islemKodu);
             this.goToStep(5);
         },
 
@@ -744,7 +765,7 @@
                     this.hideLoading();
 
                     if (response.Response && response.Response.Html) {
-                        $('#dentsoft-kvkk-content').html(response.Response.Html);
+                        $('#caparv-kvkk-content').html(response.Response.Html);
                         this.showApprovalCodeInput();
                     } else {
                         this.showError('KVKK onay kodu gönderilemedi.');
@@ -774,7 +795,7 @@
                            style="width: 80%; margin: 10px auto;">
                     <button type="button" class="swal2-confirm swal2-styled" 
                             style="margin-top: 10px; background-color: #6c757d;"
-                            onclick="$('#dentsoft-kvkk-modal').fadeIn();">
+                            onclick="$('#caparv-kvkk-modal').fadeIn();">
                         KVKK Metnini Görüntüle
                     </button>
                 `,
@@ -928,16 +949,16 @@
             }
 
             const data = {
-                action: 'dentsoft_save_appointment',
+                action: 'caparv_save_appointment',
                 nonce: this.config.nonce,
                 appointment_link: appointmentLink,
                 appointment_staff_link: staffLink,
-                patient_number: $('#dentsoft-patient-number').val(),
-                patient_name: $('#dentsoft-patient-name').val(),
-                patient_surname: $('#dentsoft-patient-surname').val(),
-                patient_phone: $('#dentsoft-patient-phone').val(),
-                patient_birthday: $('#dentsoft-patient-birthday').val(),
-                patient_email: $('#dentsoft-patient-email').val(),
+                patient_number: $('#caparv-patient-number').val(),
+                patient_name: $('#caparv-patient-name').val(),
+                patient_surname: $('#caparv-patient-surname').val(),
+                patient_phone: $('#caparv-patient-phone').val(),
+                patient_birthday: $('#caparv-patient-birthday').val(),
+                patient_email: $('#caparv-patient-email').val(),
                 clinic_name: appointmentData.Clinic.Name,
                 clinic_address: appointmentData.Clinic.ContactInfo.ContactAddress || '',
                 clinic_phone: appointmentData.Clinic.ContactInfo.ContactPhone || '',
@@ -947,28 +968,31 @@
                 appointment_status: 'pending'
             };
 
+            /* ⚠ 28 Tem 2026 DERSI — basari akisini yan isleme BAGLAMA.
+               Bu noktaya gelindiyse randevu klinik sisteminde ZATEN olusmustur.
+               Buradaki istek yalnizca yerel islem kaydi + bildirim maili icindir.
+               Basarisiz olsa bile hasta basari ekranini gormeli, olcum olaylari
+               atmalidir; aksi halde randevu olusur ama kimse bilmez. */
             $.ajax({
                 url: this.config.ajaxUrl,
                 method: 'POST',
                 data: data,
                 success: (response) => {
-                    if (response.success) {
-                        this.showSuccess(appointmentData);
-                    } else {
-                        this.showError(response.data.message || 'Randevu kaydedilemedi.');
-                    }
+                    const kod = (response && response.data && response.data.islem_kodu) || '';
+                    this.showSuccess(appointmentData, kod);
                 },
                 error: () => {
-                    this.showError('Randevu kaydedilirken hata oluştu.');
+                    this.showSuccess(appointmentData, '');
                 }
             });
         },
 
-        showSuccess(appointmentData) {
+        showSuccess(appointmentData, islemKodu) {
             try {
                 window.dataLayer = window.dataLayer || [];
                 window.dataLayer.push({
                     event: 'randevu_tamamlandi',
+                    test_modu: (this.config && this.config.testModu) ? 1 : 0,
                     randevu_tipi: 'dentsoft',
                     hekim: (appointmentData.User && appointmentData.User.Name) || ''
                 });
@@ -976,13 +1000,14 @@
             this.capaSayac('dentsoft',
                 (appointmentData.User && appointmentData.User.Name) || '',
                 (appointmentData.Appointment && appointmentData.Appointment.Date) || '');
-            $('#dentsoft-summary-patient').text(`${$('#dentsoft-patient-name').val()} ${$('#dentsoft-patient-surname').val()}`);
-            $('#dentsoft-summary-clinic').text(appointmentData.Clinic.Name);
-            $('#dentsoft-summary-doctor').text(appointmentData.User.Name);
-            $('#dentsoft-summary-datetime').text(
+            $('#caparv-summary-patient').text(`${$('#caparv-patient-name').val()} ${$('#caparv-patient-surname').val()}`);
+            $('#caparv-summary-clinic').text(appointmentData.Clinic.Name);
+            $('#caparv-summary-doctor').text(appointmentData.User.Name);
+            $('#caparv-summary-datetime').text(
                 `${this.formatDisplayDate(appointmentData.Appointment.Date)} ${appointmentData.Appointment.Time.Begin}`
             );
-            $('#dentsoft-summary-pnr').text(appointmentData.Appointment.PNR);
+            $('#caparv-summary-pnr').text(appointmentData.Appointment.PNR);
+            this.islemKoduGoster(islemKodu);
 
             this.goToStep(5);
 
@@ -995,66 +1020,66 @@
         },
 
         validateForm() {
-            const numberValue = ($('#dentsoft-patient-number').val() || '').trim();
-            const nameValue = ($('#dentsoft-patient-name').val() || '').trim();
-            const surnameValue = ($('#dentsoft-patient-surname').val() || '').trim();
-            const phoneValue = ($('#dentsoft-patient-phone').val() || '').trim();
+            const numberValue = ($('#caparv-patient-number').val() || '').trim();
+            const nameValue = ($('#caparv-patient-name').val() || '').trim();
+            const surnameValue = ($('#caparv-patient-surname').val() || '').trim();
+            const phoneValue = ($('#caparv-patient-phone').val() || '').trim();
 
             if (!numberValue) {
                 this.showError('TC Kimlik No alanı zorunludur.');
-                $('#dentsoft-patient-number').focus();
+                $('#caparv-patient-number').focus();
                 return false;
             }
             if (!this.isValidTCKN(numberValue)) {
                 this.showError('Geçerli bir TC Kimlik No giriniz (11 haneli).');
-                $('#dentsoft-patient-number').focus();
+                $('#caparv-patient-number').focus();
                 return false;
             }
 
             if (!nameValue) {
                 this.showError('Ad alanı zorunludur.');
-                $('#dentsoft-patient-name').focus();
+                $('#caparv-patient-name').focus();
                 return false;
             }
             if (!surnameValue) {
                 this.showError('Soyad alanı zorunludur.');
-                $('#dentsoft-patient-surname').focus();
+                $('#caparv-patient-surname').focus();
                 return false;
             }
 
             if (!phoneValue) {
                 this.showError('Telefon alanı zorunludur.');
-                $('#dentsoft-patient-phone').focus();
+                $('#caparv-patient-phone').focus();
                 return false;
             }
             const phoneDigits = phoneValue.replace(/[^0-9]/g, '');
             const normalizedPhone = (phoneDigits.length === 11 && phoneDigits.charAt(0) === '0') ? phoneDigits.substring(1) : phoneDigits;
             if (!/^5[0-9]{9}$/.test(normalizedPhone)) {
                 this.showError('Geçerli bir telefon numarası giriniz (5XX XXX XX XX).');
-                $('#dentsoft-patient-phone').focus();
+                $('#caparv-patient-phone').focus();
                 return false;
             }
 
-            const emailValue = ($('#dentsoft-patient-email').val() || '').trim();
+            const emailValue = ($('#caparv-patient-email').val() || '').trim();
             if (emailValue && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailValue)) {
                 this.showError('Geçerli bir e-posta adresi giriniz.');
-                $('#dentsoft-patient-email').focus();
+                $('#caparv-patient-email').focus();
                 return false;
             }
 
-            const birthdayValue = $('#dentsoft-patient-birthday').val();
+            const birthdayValue = $('#caparv-patient-birthday').val();
             if (birthdayValue) {
                 const birthDate = new Date(birthdayValue);
                 const today = new Date();
                 today.setHours(0, 0, 0, 0);
                 if (isNaN(birthDate.getTime()) || birthDate > today || birthDate.getFullYear() < 1900) {
                     this.showError('Geçerli bir doğum tarihi giriniz.');
-                    $('#dentsoft-patient-birthday').focus();
+                    $('#caparv-patient-birthday').focus();
                     return false;
                 }
             }
 
-            if (!$('#dentsoft-kvkk-checkbox').is(':checked')) {
+            if (!$('#caparv-kvkk-checkbox').is(':checked')) {
                 this.showError('KVKK onayı zorunludur.');
                 return false;
             }
@@ -1076,20 +1101,20 @@
 
         getFormData() {
             const formData = new FormData();
-            formData.append('PatientNumber', $('#dentsoft-patient-number').val());
-            formData.append('PatientFirstName', $('#dentsoft-patient-name').val());
-            formData.append('PatientLastName', $('#dentsoft-patient-surname').val());
-            formData.append('ContactMobile', $('#dentsoft-patient-phone').val());
+            formData.append('PatientNumber', $('#caparv-patient-number').val());
+            formData.append('PatientFirstName', $('#caparv-patient-name').val());
+            formData.append('PatientLastName', $('#caparv-patient-surname').val());
+            formData.append('ContactMobile', $('#caparv-patient-phone').val());
             formData.append('ContactRegion', '90');
             formData.append('Date', this.selectedData.date);
             formData.append('BeginTime', this.selectedData.time);
 
-            if ($('#dentsoft-patient-birthday').val()) {
-                formData.append('PatientBirthday', $('#dentsoft-patient-birthday').val());
+            if ($('#caparv-patient-birthday').val()) {
+                formData.append('PatientBirthday', $('#caparv-patient-birthday').val());
             }
 
-            if ($('#dentsoft-patient-email').val()) {
-                formData.append('ContactEmail', $('#dentsoft-patient-email').val());
+            if ($('#caparv-patient-email').val()) {
+                formData.append('ContactEmail', $('#caparv-patient-email').val());
             }
 
             return formData;
@@ -1123,23 +1148,23 @@
         },
 
         goToStep(step, scroll = true) {
-            $('.dentsoft-step').removeClass('active completed');
-            $('.dentsoft-step-content').removeClass('active');
+            $('.caparv-step').removeClass('active completed');
+            $('.caparv-step-content').removeClass('active');
 
             for (let i = 1; i < step; i++) {
-                $(`.dentsoft-step[data-step="${i}"]`).addClass('completed');
+                $(`.caparv-step[data-step="${i}"]`).addClass('completed');
             }
 
-            $(`.dentsoft-step[data-step="${step}"]`).addClass('active');
-            $(`.dentsoft-step-content[data-step="${step}"]`).addClass('active');
+            $(`.caparv-step[data-step="${step}"]`).addClass('active');
+            $(`.caparv-step-content[data-step="${step}"]`).addClass('active');
 
-            try { if (step > this.currentStep && step < 5) { window.dataLayer = window.dataLayer || []; window.dataLayer.push({ event: 'randevu_adim', adim: step }); } } catch (e) {}
+            try { if (step > this.currentStep && step < 5) { window.dataLayer = window.dataLayer || []; window.dataLayer.push({ event: 'randevu_adim', adim: step, test_modu: (this.config && this.config.testModu) ? 1 : 0 }); } } catch (e) {}
 
             this.currentStep = step;
 
             if (scroll) {
                 $('html, body').animate({
-                    scrollTop: $('.dentsoft-appointment-wrapper').offset().top - 50
+                    scrollTop: $('.caparv-appointment-wrapper').offset().top - 50
                 }, 500);
             }
         },
@@ -1153,9 +1178,9 @@
                 time: null
             };
 
-            $('#dentsoft-patient-form')[0].reset();
-            $('#dentsoft-clinic-select').val('').trigger('change');
-            $('#dentsoft-doctor-select').val('').trigger('change');
+            $('#caparv-patient-form')[0].reset();
+            $('#caparv-clinic-select').val('').trigger('change');
+            $('#caparv-doctor-select').val('').trigger('change');
 
             this.updateSelectionSummary();
             this.hideQuerySection();
@@ -1163,39 +1188,39 @@
         },
 
         showQuerySection() {
-            $('#dentsoft-query-section').show().addClass('active');
-            $('.dentsoft-step-content').removeClass('active');
-            $('.dentsoft-step').removeClass('active');
-            $('#dentsoft-query-result').hide();
-            $('#dentsoft-query-error').hide();
-            $('#dentsoft-query-pnr').val('');
-            $('#dentsoft-query-patient-number').val('');
+            $('#caparv-query-section').show().addClass('active');
+            $('.caparv-step-content').removeClass('active');
+            $('.caparv-step').removeClass('active');
+            $('#caparv-query-result').hide();
+            $('#caparv-query-error').hide();
+            $('#caparv-query-pnr').val('');
+            $('#caparv-query-patient-number').val('');
 
             $('html, body').animate({
-                scrollTop: $('#dentsoft-query-section').offset().top - 50
+                scrollTop: $('#caparv-query-section').offset().top - 50
             }, 500);
         },
 
         hideQuerySection() {
-            $('#dentsoft-query-section').hide().removeClass('active');
+            $('#caparv-query-section').hide().removeClass('active');
             this.goToStep(this.currentStep >= 2 ? this.currentStep : 2);
         },
 
         queryAppointment() {
-            const pnr = $('#dentsoft-query-pnr').val().trim();
-            const patientNumber = $('#dentsoft-query-patient-number').val().trim();
+            const pnr = $('#caparv-query-pnr').val().trim();
+            const patientNumber = $('#caparv-query-patient-number').val().trim();
 
             if (!pnr || !patientNumber) {
-                $('#dentsoft-query-error').text('Lütfen tüm alanları doldurunuz.').show();
+                $('#caparv-query-error').text('Lütfen tüm alanları doldurunuz.').show();
                 return;
             }
 
             if (!/^\d{4}$/.test(patientNumber)) {
-                $('#dentsoft-query-error').text('TC Kimlik No son 4 hane rakam olmalıdır.').show();
+                $('#caparv-query-error').text('TC Kimlik No son 4 hane rakam olmalıdır.').show();
                 return;
             }
 
-            $('#dentsoft-query-error').hide();
+            $('#caparv-query-error').hide();
             this.showLoading();
 
             const ajaxSettings = {
@@ -1221,13 +1246,13 @@
                             });
                         }
 
-                        $('#dentsoft-query-error').text(errorMsg).show();
-                        $('#dentsoft-query-result').hide();
+                        $('#caparv-query-error').text(errorMsg).show();
+                        $('#caparv-query-result').hide();
                     }
                 },
                 error: () => {
                     this.hideLoading();
-                    $('#dentsoft-query-error').text('Randevu sorgulanırken hata oluştu.').show();
+                    $('#caparv-query-error').text('Randevu sorgulanırken hata oluştu.').show();
                 }
             };
 
@@ -1238,6 +1263,15 @@
             }
 
             $.ajax(ajaxSettings);
+        },
+
+        hastaEpostasi(data) {
+            const p = (data && data.Patient) || {};
+            const c = p.ContactInfo || {};
+            const aday = p.Email || p.EMail || p.Mail || p.ContactEmail
+                || c.ContactEmail || c.Email || '';
+            const v = String(aday || '').trim();
+            return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v) ? v : '';
         },
 
         showQueryResult(data, pnr, patientNumber) {
@@ -1255,41 +1289,77 @@
                 });
             };
 
-            $('#dentsoft-query-patient-name').text(maskName(data.Patient.Name));
-            $('#dentsoft-query-clinic').text(data.Clinic.Name);
-            $('#dentsoft-query-doctor').text(`${data.User.Name} - ${data.User.Title || ''}`);
-            $('#dentsoft-query-datetime').text(`${formatDate(data.Appointment.Date)} ${data.Appointment.Time.Begin} - ${data.Appointment.Time.End}`);
-            $('#dentsoft-query-pnr-display').text(data.Appointment.PNR);
+            $('#caparv-query-patient-name').text(maskName(data.Patient.Name));
+            $('#caparv-query-clinic').text(data.Clinic.Name);
+            $('#caparv-query-doctor').text(`${data.User.Name} - ${data.User.Title || ''}`);
+            $('#caparv-query-datetime').text(`${formatDate(data.Appointment.Date)} ${data.Appointment.Time.Begin} - ${data.Appointment.Time.End}`);
+            $('#caparv-query-pnr-display').text(data.Appointment.PNR);
 
-            $('#dentsoft-query-result').fadeIn();
-            $('#dentsoft-cancel-appointment-btn').data('pnr', pnr).data('patient-number', patientNumber);
+            $('#caparv-query-result').fadeIn();
+            $('#caparv-cancel-appointment-btn')
+                .data('pnr', pnr)
+                .data('patient-number', patientNumber)
+                .data('clinic', (data.Clinic && data.Clinic.Name) || '')
+                .data('doctor', (data.User && data.User.Name) || '')
+                .data('datetime', ((data.Appointment && data.Appointment.Date) || '') + ' ' + ((data.Appointment && data.Appointment.Time && data.Appointment.Time.Begin) || ''))
+                .data('saat', (data.Appointment && data.Appointment.Time && data.Appointment.Time.Begin) || '')
+                // ⚠ Hasta e-postasi YALNIZ iptal bildirimi gondermek icin tasinir.
+                // Hicbir yere KAYDEDILMEZ (bkz. includes/class-db.php beyaz listesi).
+                // API alan adi surume gore degisebildigi icin birkac aday denenir.
+                .data('email', this.hastaEpostasi(data))
+                .data('ad', (data.Patient && data.Patient.Name) || '');
 
             $('html, body').animate({
-                scrollTop: $('#dentsoft-query-result').offset().top - 50
+                scrollTop: $('#caparv-query-result').offset().top - 50
             }, 500);
         },
 
         confirmCancelAppointment() {
-            const pnr = $('#dentsoft-cancel-appointment-btn').data('pnr');
-            const patientNumber = $('#dentsoft-cancel-appointment-btn').data('patient-number');
+            const $btn = $('#caparv-cancel-appointment-btn');
+            const pnr = $btn.data('pnr');
+            const patientNumber = $btn.data('patient-number');
+            const bilgi = {
+                clinic: $btn.data('clinic') || '',
+                doctor: $btn.data('doctor') || '',
+                datetime: $btn.data('datetime') || '',
+                saat: $btn.data('saat') || '',
+                email: $btn.data('email') || '',
+                ad: $btn.data('ad') || ''
+            };
 
+            /* Iptal onayi + e-posta sorusu.
+               Randevu sorgulama ucu hasta e-postasini DONDURMUYOR (28 Tem 2026'da
+               canlida dogrulandi: Patient => ID, UniqueID, Name, Registration).
+               Bu yuzden iptal bildirimini hastaya gonderebilmek icin adresi
+               burada soruyoruz. Girilen adres HICBIR YERE KAYDEDILMEZ; yalnizca
+               tek seferlik bildirim icin kullanilir. Bos birakilabilir. */
             Swal.fire({
-                title: 'Emin misiniz?',
-                text: 'Randevunuzu iptal etmek istediğinize emin misiniz?',
+                title: 'Randevunuzu iptal edin',
                 icon: 'warning',
+                input: 'email',
+                inputLabel: 'İptal onayını e-posta ile almak isterseniz adresinizi yazın (isteğe bağlı)',
+                inputPlaceholder: 'ornek@eposta.com',
+                inputValue: (bilgi && bilgi.email) || '',
+                inputAttributes: { autocomplete: 'email' },
+                inputValidator: (v) => {
+                    if (!v) { return null; }
+                    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v) ? null : 'Geçerli bir e-posta adresi yazın.';
+                },
+                html: '<p style="margin:0 0 10px;">Randevunuzu iptal etmek istediğinize emin misiniz?</p>',
                 showCancelButton: true,
-                confirmButtonColor: 'var(--dentsoft-primary)',
-                cancelButtonColor: 'var(--dentsoft-danger)',
+                confirmButtonColor: 'var(--caparv-primary)',
+                cancelButtonColor: 'var(--caparv-danger)',
                 confirmButtonText: 'Evet, İptal Et',
                 cancelButtonText: 'Vazgeç'
             }).then((result) => {
                 if (result.isConfirmed) {
-                    this.cancelAppointment(pnr, patientNumber);
+                    bilgi.email = (result.value || '').trim();
+                    this.cancelAppointment(pnr, patientNumber, bilgi);
                 }
             });
         },
 
-        cancelAppointment(pnr, patientNumber) {
+        cancelAppointment(pnr, patientNumber, bilgi) {
             this.showLoading();
 
             const ajaxSettings = {
@@ -1305,7 +1375,20 @@
                     $.ajax({
                         url: this.config.ajaxUrl,
                         method: 'POST',
-                        data: { action: 'dentsoft_cancel_appointment', nonce: this.config.nonce, pnr_no: pnr }
+                        // Klinik/hekim/tarih bilgisi BURADAN gonderilir: yerelde hasta
+                        // kaydi tutulmadigi icin sunucunun bu bilgileri okuyacagi bir
+                        // tablo yok. Iptal bildirimi personele bu veriyle gider.
+                        data: {
+                            action: 'caparv_cancel_appointment',
+                            nonce: this.config.nonce,
+                            pnr_no: pnr,
+                            clinic_name: (bilgi && bilgi.clinic) || '',
+                            doctor_name: (bilgi && bilgi.doctor) || '',
+                            appointment_date: (bilgi && bilgi.datetime) || '',
+                            appointment_time: (bilgi && bilgi.saat) || '',
+                            patient_email: (bilgi && bilgi.email) || '',
+                            patient_name: (bilgi && bilgi.ad) || ''
+                        }
                     });
 
                     Swal.fire({
@@ -1314,10 +1397,10 @@
                         text: 'Randevunuz başarıyla iptal edildi.',
                         confirmButtonText: 'Tamam'
                     }).then(() => {
-                        $('#dentsoft-query-pnr').val('');
-                        $('#dentsoft-query-patient-number').val('');
-                        $('#dentsoft-query-result').hide();
-                        $('#dentsoft-query-error').hide();
+                        $('#caparv-query-pnr').val('');
+                        $('#caparv-query-patient-number').val('');
+                        $('#caparv-query-result').hide();
+                        $('#caparv-query-error').hide();
                     });
                 },
                 error: () => {
@@ -1342,10 +1425,10 @@
 
         showKVKK(e) {
             e.preventDefault();
-            $('#dentsoft-kvkk-modal').fadeIn();
+            $('#caparv-kvkk-modal').fadeIn();
             const kvkkUrl = 'https://capaortodonti.com/kvkk/';
-            $('#dentsoft-kvkk-content').html(
-                '<div class="dentsoft-loading"><div class="dentsoft-spinner"></div><p>Y\u00fckleniyor...</p></div>' +
+            $('#caparv-kvkk-content').html(
+                '<div class="caparv-loading"><div class="caparv-spinner"></div><p>Y\u00fckleniyor...</p></div>' +
                 '<iframe src="' + kvkkUrl + '" ' +
                 'style="width:100%;height:60vh;border:0;display:block;" ' +
                 'onload="this.previousElementSibling && this.previousElementSibling.remove();" ' +
@@ -1354,7 +1437,7 @@
         },
 
         closeModal() {
-            $('#dentsoft-kvkk-modal').fadeOut();
+            $('#caparv-kvkk-modal').fadeOut();
         },
 
         formatDate(date) {
@@ -1375,7 +1458,7 @@
 
         showLoading() {
             $.blockUI({
-                message: '<div class="dentsoft-loading"><div class="dentsoft-spinner"></div><p>Lütfen bekleyiniz...</p></div>',
+                message: '<div class="caparv-loading"><div class="caparv-spinner"></div><p>Lütfen bekleyiniz...</p></div>',
                 css: {
                     border: 'none',
                     padding: '20px',
@@ -1403,8 +1486,8 @@
     };
 
     $(document).ready(function () {
-        if ($('.dentsoft-appointment-wrapper').length > 0) {
-            DentSoftApp.init();
+        if ($('.caparv-appointment-wrapper').length > 0) {
+            CaparvApp.init();
         }
     });
 
