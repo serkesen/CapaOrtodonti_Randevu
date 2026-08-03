@@ -326,7 +326,7 @@ final class Caparv_Plugin {
             'pluginUrl'   => CAPARV_URL,
             // Test modu: olcum ATESLENIR ama 'test' etiketiyle gider, boylece
             // hattin calistigini canliya almadan gorur, veriyi de kirletmeyiz.
-            'testModu'    => self::test_modu() ? 1 : 0,
+            'testModu'    => self::test_modu() ? '1' : '',
             'strings'     => array(
                 'loading'      => 'Yükleniyor...',
                 'error'        => 'Bir hata oluştu',
