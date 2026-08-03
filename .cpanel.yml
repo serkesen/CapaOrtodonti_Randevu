@@ -7,7 +7,7 @@ deployment:
   tasks:
     - export PLUGINDIR=/home/d34fcetzlilchq/public_html/wp-content/plugins/capa-randevu
     - export CLONEDIR=/home/d34fcetzlilchq/git-deploy/CapaOrtodonti_Randevu
-    - /bin/mkdir -p "$PLUGINDIR/admin" "$PLUGINDIR/includes" "$PLUGINDIR/public" "$PLUGINDIR/assets/css" "$PLUGINDIR/assets/js" "$PLUGINDIR/assets/fonts" "$PLUGINDIR/assets/vendor/select2/i18n" "$PLUGINDIR/assets/vendor/sweetalert2"
+    - /bin/mkdir -p "$PLUGINDIR/admin" "$PLUGINDIR/includes" "$PLUGINDIR/public" "$PLUGINDIR/assets/css" "$PLUGINDIR/assets/js" "$PLUGINDIR/assets/fonts" "$PLUGINDIR/assets/img" "$PLUGINDIR/assets/vendor/select2/i18n" "$PLUGINDIR/assets/vendor/sweetalert2"
     - /usr/bin/rsync -a "$CLONEDIR/capa-randevu.php" "$PLUGINDIR/capa-randevu.php"
     - /usr/bin/rsync -a "$CLONEDIR/uninstall.php" "$PLUGINDIR/uninstall.php"
     - /usr/bin/rsync -a "$CLONEDIR/includes/class-ajax.php" "$PLUGINDIR/includes/class-ajax.php"
@@ -19,6 +19,7 @@ deployment:
     - /usr/bin/rsync -a "$CLONEDIR/assets/css/admin.css" "$PLUGINDIR/assets/css/admin.css"
     - /usr/bin/rsync -a "$CLONEDIR/assets/css/icons.css" "$PLUGINDIR/assets/css/icons.css"
     - /usr/bin/rsync -a "$CLONEDIR/assets/js/app.js" "$PLUGINDIR/assets/js/app.js"
+    - /usr/bin/rsync -a "$CLONEDIR/assets/img/default-avatar.png" "$PLUGINDIR/assets/img/default-avatar.png"
     - /usr/bin/rsync -a "$CLONEDIR/assets/fonts/fa-solid-900.woff2" "$PLUGINDIR/assets/fonts/fa-solid-900.woff2"
     - /usr/bin/rsync -a "$CLONEDIR/assets/vendor/jquery.blockUI.js" "$PLUGINDIR/assets/vendor/jquery.blockUI.js"
     - /usr/bin/rsync -a "$CLONEDIR/assets/vendor/select2/select2.full.min.js" "$PLUGINDIR/assets/vendor/select2/select2.full.min.js"
