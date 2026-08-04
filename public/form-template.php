@@ -101,6 +101,11 @@ $primary_light = hexToRgba($primary_color, 0.1);
                             <img class="summary-avatar" src="" alt="" loading="lazy" style="display:none;">
                             <span class="summary-text"></span>
                         </div>
+                        <!-- 4 Agu 2026: tarih/saat satiri. Secim yapiliyordu ama ozete hic yazilmiyordu. -->
+                        <div id="caparv-selected-datetime" class="summary-item" style="display:none;">
+                            <span class="summary-badge"><i class="fa fa-calendar"></i></span>
+                            <span class="summary-text"></span>
+                        </div>
                     </div>
                 </div>
             </div>
