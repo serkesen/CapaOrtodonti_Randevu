@@ -839,6 +839,25 @@
     border: 1.5px solid var(--caparv-border) !important;
 }
 
+/* Tarih/saat satirinin yuvarlak rozeti — diger iki satirdaki 28px yuvarlak
+   gorsellerle ayni ritmi korur. */
+.caparv-summary-card .summary-item .summary-badge {
+    width: 28px !important;
+    height: 28px !important;
+    flex: 0 0 auto !important;
+    border-radius: 50% !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    background: var(--caparv-primary) !important;
+}
+
+.caparv-summary-card .summary-item .summary-badge i {
+    font-size: 14px !important;
+    width: auto !important;
+    color: #fff !important;
+}
+
 .caparv-summary-card .summary-item .summary-text {
     flex: 1;
 }
