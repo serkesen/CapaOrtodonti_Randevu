@@ -352,7 +352,17 @@
                 $doctorItem.hide();
             }
 
-            if (this.selectedData.clinic || this.selectedData.doctor) {
+            /* 4 Agu 2026: tarih/saat satiri. */
+            const $dtItem = $('#caparv-selected-datetime');
+            if (this.selectedData.date && this.selectedData.time) {
+                $dtItem.find('.summary-text')
+                    .text(`${this.formatDisplayDate(this.selectedData.date)} \u00b7 ${this.selectedData.time}`);
+                $dtItem.fadeIn();
+            } else {
+                $dtItem.hide();
+            }
+
+            if (this.selectedData.clinic || this.selectedData.doctor || this.selectedData.date) {
                 $summary.fadeIn();
             } else {
                 $summary.hide();
@@ -589,6 +599,7 @@
                 this.selectedData.date = null;
                 this.selectedData.time = null;
                 $('.caparv-btn-next').prop('disabled', true);
+                this.updateSelectionSummary();
                 return;
             }
 
@@ -602,6 +613,7 @@
             this.selectedData.time = time;
 
             $('.caparv-btn-next').prop('disabled', false);
+            this.updateSelectionSummary();
         },
 
         changeWeek(direction) {
