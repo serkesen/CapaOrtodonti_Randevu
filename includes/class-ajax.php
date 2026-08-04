@@ -28,6 +28,34 @@ class Caparv_Ajax_Handlers {
     }
 
     /**
+     * 4 Agu 2026 — HIZ SINIRI.
+     *
+     * Uc public uc (save_appointment / genel_randevu / cancel_appointment)
+     * wp_ajax_nopriv_ ile kayitli ve ALICIYI istek belirliyor:
+     * $_POST['patient_email'] -> hasta_alici() -> wp_mail(). Nonce herkese
+     * acik sayfada basildigi icin tek basina kotuye kullanimi engellemiyordu
+     * ve hicbir sinir yoktu. Sonuc: klinigin alan adindan, klinigin sablonuyla
+     * secilen adreslere toplu posta gonderilebiliyordu.
+     *
+     * ⚠ TASARIM KARARI: sinir GENIS (saatte 10). Gercek hastayi engellemek,
+     * spam'e izin vermekten pahalidir. Ayni-kaynak kontrolu BILEREK yok —
+     * referrer gondermeyen tarayicidaki hastayi randevudan etmesin.
+     * IP saklanmaz; yalniz hash'i gecici anahtar olur.
+     */
+    private function hiz_siniri($etiket, $limit = 10) {
+        $ip  = isset($_SERVER['REMOTE_ADDR']) ? sanitize_text_field(wp_unslash($_SERVER['REMOTE_ADDR'])) : '0';
+        $key = 'caparv_hz_' . $etiket . '_' . md5($ip . '|' . gmdate('YmdH'));
+        $n   = (int) get_transient($key);
+        if ($n >= $limit) {
+            wp_send_json_error(array(
+                'message' => 'Çok fazla deneme yapıldı. Lütfen bir süre sonra tekrar deneyin veya (0212) 587 24 24\'ü arayın.'
+            ));
+            wp_die();
+        }
+        set_transient($key, $n + 1, HOUR_IN_SECONDS);
+    }
+
+    /**
      * Mail alicilari. TEST MODUNDA hasta adresine e-posta GITMEZ; her sey
      * personel adresine yonlenir. Boylece test randevulari gercek bir
      * hastanin kutusuna dusemez.
@@ -77,6 +105,7 @@ class Caparv_Ajax_Handlers {
     
     public function save_appointment() {
         $this->verify_nonce();
+        $this->hiz_siniri('kayit');
         
         global $wpdb;
         
@@ -202,6 +231,7 @@ class Caparv_Ajax_Handlers {
 
     public function cancel_appointment_notify() {
         $this->verify_nonce();
+        $this->hiz_siniri('iptal');
 
         $pnr = isset($_POST['pnr_no']) ? sanitize_text_field(wp_unslash($_POST['pnr_no'])) : '';
         if (empty($pnr)) {
@@ -272,6 +302,7 @@ class Caparv_Ajax_Handlers {
 
     public function genel_randevu_notify() {
         $this->verify_nonce();
+        $this->hiz_siniri('genel');
 
         $required_fields = array('patient_number', 'patient_name', 'patient_surname', 'patient_phone');
         foreach ($required_fields as $field) {
