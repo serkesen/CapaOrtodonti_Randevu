@@ -827,6 +827,18 @@
     text-align: center !important;
 }
 
+/* 4 Agu 2026: ozet cubugunda jenerik FA ikonlari yerine gorsel —
+   klinik icin Capa ikonu, hekim icin mini fotograf. */
+.caparv-summary-card .summary-item .summary-avatar {
+    width: 28px !important;
+    height: 28px !important;
+    flex: 0 0 auto !important;
+    border-radius: 50% !important;
+    object-fit: cover !important;
+    background: #fff !important;
+    border: 1.5px solid var(--caparv-border) !important;
+}
+
 .caparv-summary-card .summary-item .summary-text {
     flex: 1;
 }
