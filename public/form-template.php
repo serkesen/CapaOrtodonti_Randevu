@@ -92,11 +92,13 @@ $primary_light = hexToRgba($primary_color, 0.1);
                     </div>
                     <div class="summary-content">
                         <div id="caparv-selected-clinic" class="summary-item" style="display:none;">
-                            <i class="fa fa-hospital"></i>
+                            <!-- 4 Agu 2026: jenerik hastane ikonu yerine Capa ikonu. -->
+                            <img class="summary-avatar" src="https://capaortodonti.com/wp-content/uploads/capa-ikon-128.png" alt="" loading="lazy">
                             <span class="summary-text"></span>
                         </div>
                         <div id="caparv-selected-doctor" class="summary-item" style="display:none;">
-                            <i class="fa fa-user-doctor"></i>
+                            <!-- src app.js tarafindan doldurulur: secili hekimin mini fotografi. -->
+                            <img class="summary-avatar" src="" alt="" loading="lazy" style="display:none;">
                             <span class="summary-text"></span>
                         </div>
                     </div>
