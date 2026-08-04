@@ -341,6 +341,12 @@
                 const fullName = `${this.selectedData.doctor.User.FirstName} ${this.selectedData.doctor.User.LastName}`;
                 const role = this.selectedData.doctor.User.Roles || 'Diş Hekimi';
                 $doctorItem.find('.summary-text').text(`${fullName} - ${role}`);
+                /* 4 Agu 2026: ozet cubugunda jenerik ikon yerine hekimin mini fotografi.
+                   Kaynak, secili option'in data-avatar'i — boylece Genel Randevu da kendi
+                   SVG avatarini kullanir, ayrik durum gerekmez. */
+                const avatarSrc = $('#caparv-doctor-select').find('option:selected').data('avatar') || '';
+                const $docAvatar = $doctorItem.find('.summary-avatar');
+                if (avatarSrc) { $docAvatar.attr('src', avatarSrc).show(); } else { $docAvatar.hide(); }
                 $doctorItem.fadeIn();
             } else {
                 $doctorItem.hide();
