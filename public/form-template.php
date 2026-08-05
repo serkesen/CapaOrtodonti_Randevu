@@ -382,7 +382,7 @@ $primary_light = hexToRgba($primary_color, 0.1);
                                         name="kvkk_approval" 
                                         required>
                                     <span>
-                                        <a href="#" id="caparv-kvkk-link">KVKK Aydınlatma Metnini</a> okudum ve kabul ediyorum <span class="required">*</span>
+                                        <a href="#" id="caparv-kvkk-link">KVKK Aydınlatma Metnini</a> okudum, bilgilendirildim <span class="required">*</span>
                                     </span>
                                 </label>
                             </div>
