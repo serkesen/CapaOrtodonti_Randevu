@@ -1443,21 +1443,24 @@
 
         showKVKK(e) {
             e.preventDefault();
-            this.belgeAc('https://capaortodonti.com/kvkk/', 'KVKK Aydınlatma Metni');
+            this.belgeAc('kvkk', 'KVKK Aydınlatma Metni');
         },
 
         // Tek modal birden fazla belgeyi gosterebilir; baslik calisma aninda degisir.
-        belgeAc(url, baslik) {
+        belgeAc(slug, baslik) {
             $('#caparv-kvkk-modal').fadeIn();
             $('#caparv-kvkk-modal .caparv-modal-header h3').text(baslik);
-            const kvkkUrl = url;
-            $('#caparv-kvkk-content').html(
-                '<div class="caparv-loading"><div class="caparv-spinner"></div><p>Y\u00fckleniyor...</p></div>' +
-                '<iframe src="' + kvkkUrl + '" ' +
-                'style="width:100%;height:60vh;border:0;display:block;" ' +
-                'onload="this.previousElementSibling && this.previousElementSibling.remove();" ' +
-                'title="' + baslik + '"></iframe>'
-            );
+            const kutu = $('#caparv-kvkk-content');
+            const yedek = '<p style="padding:16px;">Belge şu an görüntülenemiyor. '
+                + '<a href="/' + slug + '/" target="_blank" rel="noopener">Sayfayı yeni sekmede aç</a></p>';
+            kutu.html('<div class="caparv-loading"><div class="caparv-spinner"></div><p>Y\u00fckleniyor...</p></div>');
+            $.ajax({ url: '/wp-json/wp/v2/pages', data: { slug: slug, _fields: 'content' }, dataType: 'json' })
+                .done((liste) => {
+                    const govde = (liste && liste[0] && liste[0].content && liste[0].content.rendered) || '';
+                    if (!govde) { kutu.html(yedek); return; }
+                    kutu.html('<div class="caparv-belge" style="max-height:60vh;overflow-y:auto;text-align:left;font-size:14px;line-height:1.65;padding:4px 18px 18px;">' + govde + '</div>');
+                })
+                .fail(() => { kutu.html(yedek); });
         },
 
         closeModal() {
