@@ -1098,7 +1098,7 @@
             }
 
             if (!$('#caparv-kvkk-checkbox').is(':checked')) {
-                this.showError('KVKK onayı zorunludur.');
+                this.showError('Devam etmek için aydınlatma metnini okuduğunuzu onaylayın.');
                 return false;
             }
 
@@ -1443,14 +1443,20 @@
 
         showKVKK(e) {
             e.preventDefault();
+            this.belgeAc('https://capaortodonti.com/kvkk/', 'KVKK Aydınlatma Metni');
+        },
+
+        // Tek modal birden fazla belgeyi gosterebilir; baslik calisma aninda degisir.
+        belgeAc(url, baslik) {
             $('#caparv-kvkk-modal').fadeIn();
-            const kvkkUrl = 'https://capaortodonti.com/kvkk/';
+            $('#caparv-kvkk-modal .caparv-modal-header h3').text(baslik);
+            const kvkkUrl = url;
             $('#caparv-kvkk-content').html(
                 '<div class="caparv-loading"><div class="caparv-spinner"></div><p>Y\u00fckleniyor...</p></div>' +
                 '<iframe src="' + kvkkUrl + '" ' +
                 'style="width:100%;height:60vh;border:0;display:block;" ' +
                 'onload="this.previousElementSibling && this.previousElementSibling.remove();" ' +
-                'title="KVKK Ayd\u0131nlatma Metni"></iframe>'
+                'title="' + baslik + '"></iframe>'
             );
         },
 
